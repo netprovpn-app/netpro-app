@@ -407,7 +407,7 @@
       });
     }
 
-    function finalizeOrder() {
+  async function finalizeOrder() {
       const refId = document.getElementById('refId').value.trim();
 
       if (!refId) {
@@ -415,13 +415,29 @@
         return;
       }
 
+      const user = tg.initDataUnsafe?.user || {};
       const payload = {
         plan: currentOrder.plan,
         price: currentOrder.price,
-        ref_id: refId
+        ref_id: refId,
+        user_id: user.id,
+        user_name: user.first_name || 'کاربر',
+        username: user.username || ''
       };
 
-      tg.sendData(JSON.stringify(payload));
+      try {
+        // آدرس رندر خود را در خط زیر قرار دهید
+        await fetch("https://https://netpro-bot.onrender.com/api/order", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+      } catch (err) {
+        console.error(err);
+      }
+
+      tg.close();
+    }
       tg.close();
     }
   </script>
