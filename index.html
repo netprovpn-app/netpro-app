@@ -112,7 +112,6 @@
       flex-shrink: 0;
     }
 
-    /* دکمه ۳ بعدی */
     .btn-3d-main {
       width: 100%;
       max-width: 320px;
@@ -127,7 +126,7 @@
       font-weight: 700;
       cursor: pointer;
       box-shadow: 0 6px 0 var(--primary-shadow), 0 10px 18px rgba(37, 99, 235, 0.35);
-      transition: transform 0.1s ease, box-shadow 0.1s ease;
+      transition: all 0.1s ease;
       position: relative;
       top: 0;
       text-align: center;
@@ -276,7 +275,6 @@
       </ul>
     </div>
 
-    <!-- دکمه ورود به صفحه خرید -->
     <button type="button" id="btn-go-plans" class="btn-3d-main">
       🛍 خرید اشتراک
     </button>
@@ -359,26 +357,21 @@
     </div>
 
     <button type="button" id="btn-submit-order" class="btn-3d-main">
-      ✅ ثبت سفارش و ارسال رسید
+      ✅ ارسال به چت و تایید سفارش
     </button>
   </div>
 
   <script>
-    // بستن ایمن آبجکت تلگرام تا خطای لودینگ ندهد
-    try {
-      if (window.Telegram && window.Telegram.WebApp) {
-        window.Telegram.WebApp.ready();
-        window.Telegram.WebApp.expand();
-      }
-    } catch(e) {
-      console.warn("Telegram WebApp not found");
+    const tg = window.Telegram ? window.Telegram.WebApp : null;
+    if (tg) {
+      tg.ready();
+      tg.expand();
     }
 
     let selectedOrder = { plan: '', price: '' };
 
     function showPage(pageId) {
-      const allPages = document.querySelectorAll('.page');
-      allPages.forEach(p => {
+      document.querySelectorAll('.page').forEach(p => {
         p.classList.remove('active');
         p.style.display = 'none';
       });
@@ -390,19 +383,11 @@
       window.scrollTo(0, 0);
     }
 
-    // اتصال رویداد کلیک دکمه خرید در صفحه اول
     document.addEventListener('DOMContentLoaded', () => {
-      // دکمه صفحه اول
-      const goPlansBtn = document.getElementById('btn-go-plans');
-      if (goPlansBtn) {
-        goPlansBtn.onclick = () => showPage('page-plans');
-      }
-
-      // بازگشت‌ها
+      document.getElementById('btn-go-plans').onclick = () => showPage('page-plans');
       document.getElementById('btn-back-home').onclick = () => showPage('page-home');
       document.getElementById('btn-back-plans').onclick = () => showPage('page-plans');
 
-      // کلیک روی پلن‌ها
       document.querySelectorAll('.plan-btn-3d').forEach(btn => {
         btn.onclick = function() {
           const name = this.getAttribute('data-name');
@@ -415,8 +400,7 @@
         };
       });
 
-      // کپی کارت
-      const doCopy = () => {
+      const copyAction = () => {
         const raw = "6219861817080335";
         navigator.clipboard.writeText(raw).then(() => {
           alert("شماره کارت کپی شد: " + raw);
@@ -424,52 +408,52 @@
           alert("شماره کارت: " + raw);
         });
       };
-      document.getElementById('cardNum').onclick = doCopy;
-      document.getElementById('copyTextHint').onclick = doCopy;
+      document.getElementById('cardNum').onclick = copyAction;
+      document.getElementById('copyTextHint').onclick = copyAction;
 
-      // ثبت نهایی
-     // ثبت نهایی سفارش بدون وابستگی به شبکه و فیلترینگ
+      // ثبت سفارش بدون هرگونه درخواست fetch یا اینترنت خارجی
       document.getElementById('btn-submit-order').onclick = function() {
         const refInput = document.getElementById('refId');
         const refVal = refInput ? refInput.value.trim() : '';
 
         if (!refVal) {
-          alert('لطفاً کد پیگیری یا ۴ رقم آخر کارت را بنویسید.');
+          alert('لطفاً کد پیگیری یا ۴ رقم آخر کارت را وارد کنید.');
           return;
         }
 
-        const btn = this;
-        btn.innerText = '✅ در حال هدایت به چت...';
-        btn.disabled = true;
-
-        // آماده‌سازی متن فیش
         const plan = selectedOrder.plan || "یکماهه";
         const price = selectedOrder.price || "۰";
-        
-        const orderSummary = 
-          `سفارش جدید نت پرو:\n` +
-          `📦 پلن: ${plan}\n` +
-          `💰 مبلغ: ${price} تومان\n` +
-          `🧾 کد پیگیری: ${refVal}`;
 
-        // ارسال به بات از طریق قابلیت مستقیم تلگرام
-        if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.sendData) {
+        // اول تلاش مستقیم از طریق پروتکل درونی تلگرام (اگر از دکمه کیبورد باز شده باشد)
+        if (tg && tg.sendData) {
           try {
-            window.Telegram.WebApp.sendData(JSON.stringify({
+            tg.sendData(JSON.stringify({
               plan: plan,
               price: price,
               ref_id: refVal
             }));
-            window.Telegram.WebApp.close();
+            tg.close();
             return;
-          } catch (e) {
-            console.log("sendData failed, fallback to switchInline");
-          }
+          } catch(e) {}
         }
 
-        // روش جایگزین مطمئن: باز کردن چت با پیام آماده و بستن وب‌اپ
-        alert("✅ اطلاعات سفارش آماده شد. لطفاً در صفحه چت پیام را ارسال کرده و تصویر فیش را بفرستید.");
-        if (window.Telegram && window.Telegram.WebApp) {
-          window.Telegram.WebApp.close();
+        // اگر از منو بات باز شده بود، متن را آماده و به تلگرام ارسال می‌کنیم
+        const messageText = encodeURIComponent(
+          `سلام، سفارش جدید ثبت کردم:\n\n` +
+          `📦 پلن: ${plan}\n` +
+          `💰 مبلغ: ${price} تومان\n` +
+          `🧾 کد پیگیری: ${refVal}\n\n` +
+          `تصویر فیش واریزی را هم ضمیمه می‌کنم:`
+        );
+
+        if (tg && tg.openTelegramLink) {
+          tg.openTelegramLink(`https://t.me/share/url?url=${messageText}`);
+          tg.close();
+        } else {
+          window.location.href = `https://t.me/share/url?url=${messageText}`;
         }
       };
+    });
+  </script>
+</body>
+</html>
