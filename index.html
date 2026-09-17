@@ -7,13 +7,13 @@
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     :root {
-      --bg: var(--tg-theme-bg-color, #0f172a);
-      --text: var(--tg-theme-text-color, #f8fafc);
-      --card-bg: var(--tg-theme-secondary-bg-color, #1e293b);
+      --bg: #0f172a;
+      --text: #f8fafc;
+      --card-bg: #1e293b;
       --primary: #3b82f6;
       --primary-shadow: #1e40af;
       --accent-green: #22c55e;
-      --hint: var(--tg-theme-hint-color, #94a3b8);
+      --hint: #94a3b8;
     }
 
     * {
@@ -36,32 +36,31 @@
 
     .page {
       display: none;
-      animation: fadeIn 0.25s ease-in-out;
+      animation: fadeIn 0.2s ease-in-out;
     }
     .page.active {
-      display: block;
+      display: block !important;
     }
 
     @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(6px); }
+      from { opacity: 0; transform: translateY(4px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
     .hero-title {
-      font-size: 1.55rem;
+      font-size: 1.5rem;
       font-weight: 800;
       text-align: center;
       margin-top: 10px;
       margin-bottom: 6px;
       color: #60a5fa;
-      letter-spacing: -0.5px;
     }
 
     .hero-subtitle {
-      font-size: 1.02rem;
+      font-size: 0.98rem;
       font-weight: 600;
       text-align: center;
-      margin-bottom: 24px;
+      margin-bottom: 20px;
       color: var(--text);
       opacity: 0.9;
     }
@@ -71,7 +70,7 @@
       border-radius: 16px;
       padding: 18px;
       border: 1px solid rgba(255, 255, 255, 0.08);
-      margin-bottom: 30px;
+      margin-bottom: 26px;
       box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
     }
 
@@ -95,7 +94,7 @@
       display: flex;
       align-items: center;
       gap: 8px;
-      font-size: 0.88rem;
+      font-size: 0.86rem;
       line-height: 1.5;
       color: var(--text);
     }
@@ -113,6 +112,7 @@
       flex-shrink: 0;
     }
 
+    /* دکمه ۳ بعدی */
     .btn-3d-main {
       width: 100%;
       max-width: 320px;
@@ -127,21 +127,15 @@
       font-weight: 700;
       cursor: pointer;
       box-shadow: 0 6px 0 var(--primary-shadow), 0 10px 18px rgba(37, 99, 235, 0.35);
-      transition: all 0.1s ease;
+      transition: transform 0.1s ease, box-shadow 0.1s ease;
       position: relative;
       top: 0;
+      text-align: center;
     }
 
     .btn-3d-main:active {
       top: 4px;
       box-shadow: 0 2px 0 var(--primary-shadow), 0 4px 8px rgba(37, 99, 235, 0.2);
-    }
-
-    .btn-3d-main:disabled {
-      background: #64748b;
-      box-shadow: none;
-      cursor: not-allowed;
-      top: 0;
     }
 
     .section-title {
@@ -154,7 +148,7 @@
     .plans-grid {
       display: flex;
       flex-direction: column;
-      gap: 14px;
+      gap: 12px;
       margin-bottom: 24px;
     }
 
@@ -171,17 +165,17 @@
       cursor: pointer;
       position: relative;
       top: 0;
-      box-shadow: 0 5px 0 rgba(0, 0, 0, 0.4), 0 8px 12px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 4px 0 rgba(0, 0, 0, 0.4);
       transition: all 0.1s ease;
     }
 
     .plan-btn-3d:active {
-      top: 4px;
-      box-shadow: 0 1px 0 rgba(0, 0, 0, 0.4), 0 2px 4px rgba(0, 0, 0, 0.2);
+      top: 3px;
+      box-shadow: 0 1px 0 rgba(0, 0, 0, 0.4);
     }
 
     .plan-name {
-      font-size: 0.96rem;
+      font-size: 0.95rem;
       font-weight: 700;
     }
 
@@ -205,7 +199,7 @@
       align-items: center;
       gap: 4px;
       margin-bottom: 14px;
-      padding: 4px 0;
+      padding: 6px 0;
     }
 
     .selected-summary {
@@ -261,10 +255,6 @@
       margin-top: 8px;
       outline: none;
     }
-
-    input[type="text"]:focus {
-      border-color: #3b82f6;
-    }
   </style>
 </head>
 <body>
@@ -286,53 +276,54 @@
       </ul>
     </div>
 
-    <button class="btn-3d-main" onclick="goToPage('page-plans')">
+    <!-- دکمه ورود به صفحه خرید -->
+    <button type="button" id="btn-go-plans" class="btn-3d-main">
       🛍 خرید اشتراک
     </button>
   </div>
 
   <!-- صفحه ۲: تعرفه‌ها -->
   <div id="page-plans" class="page">
-    <button class="back-btn" onclick="goToPage('page-home')">← بازگشت به صفحه اصلی</button>
+    <button type="button" id="btn-back-home" class="back-btn">← بازگشت به صفحه اصلی</button>
     <div class="section-title">انتخاب پلن اشتراک</div>
 
     <div class="plans-grid">
-      <div class="plan-btn-3d" onclick="selectPlan('یکماهه ۱۰ گیگابایت', '137,000')">
+      <div class="plan-btn-3d" data-name="یکماهه ۱۰ گیگابایت" data-price="137,000">
         <span class="plan-name">یکماهه ۱۰ گیگابایت</span>
         <span class="plan-price-tag">۱۳۷,۰۰۰ تومان</span>
       </div>
 
-      <div class="plan-btn-3d" onclick="selectPlan('یکماهه ۲۰ گیگابایت', '264,000')">
+      <div class="plan-btn-3d" data-name="یکماهه ۲۰ گیگابایت" data-price="264,000">
         <span class="plan-name">یکماهه ۲۰ گیگابایت</span>
         <span class="plan-price-tag">۲۶۴,۰۰۰ تومان</span>
       </div>
 
-      <div class="plan-btn-3d" onclick="selectPlan('یکماهه ۳۰ گیگابایت', '384,000')">
+      <div class="plan-btn-3d" data-name="یکماهه ۳۰ گیگابایت" data-price="384,000">
         <span class="plan-name">یکماهه ۳۰ گیگابایت</span>
         <span class="plan-price-tag">۳۸۴,۰۰۰ تومان</span>
       </div>
 
-      <div class="plan-btn-3d" onclick="selectPlan('یکماهه ۵۰ گیگابایت', '554,000')">
+      <div class="plan-btn-3d" data-name="یکماهه ۵۰ گیگابایت" data-price="554,000">
         <span class="plan-name">یکماهه ۵۰ گیگابایت</span>
         <span class="plan-price-tag">۵۵۴,۰۰۰ تومان</span>
       </div>
 
-      <div class="plan-btn-3d" onclick="selectPlan('یکماهه ۷۵ گیگابایت', '814,000')">
+      <div class="plan-btn-3d" data-name="یکماهه ۷۵ گیگابایت" data-price="814,000">
         <span class="plan-name">یکماهه ۷۵ گیگابایت</span>
         <span class="plan-price-tag">۸۱۴,۰۰۰ تومان</span>
       </div>
 
-      <div class="plan-btn-3d" onclick="selectPlan('یکماهه ۱۰۰ گیگابایت', '1,000,000')">
+      <div class="plan-btn-3d" data-name="یکماهه ۱۰۰ گیگابایت" data-price="1,000,000">
         <span class="plan-name">یکماهه ۱۰۰ گیگابایت</span>
         <span class="plan-price-tag">۱,۰۰۰,۰۰۰ تومان</span>
       </div>
 
-      <div class="plan-btn-3d" onclick="selectPlan('یکماهه ۱۵۰ گیگابایت', '1,484,000')">
+      <div class="plan-btn-3d" data-name="یکماهه ۱۵۰ گیگابایت" data-price="1,484,000">
         <span class="plan-name">یکماهه ۱۵۰ گیگابایت</span>
         <span class="plan-price-tag">۱,۴۸۴,۰۰۰ تومان</span>
       </div>
 
-      <div class="plan-btn-3d" onclick="selectPlan('یکماهه ۲۰۰ گیگابایت', '1,854,000')">
+      <div class="plan-btn-3d" data-name="یکماهه ۲۰۰ گیگابایت" data-price="1,854,000">
         <span class="plan-name">یکماهه ۲۰۰ گیگابایت</span>
         <span class="plan-price-tag">۱,۸۵۴,۰۰۰ تومان</span>
       </div>
@@ -341,7 +332,7 @@
 
   <!-- صفحه ۳: پرداخت -->
   <div id="page-pay" class="page">
-    <button class="back-btn" onclick="goToPage('page-plans')">← تغییر پلن</button>
+    <button type="button" id="btn-back-plans" class="back-btn">← تغییر پلن</button>
     
     <div class="selected-summary">
       <div>
@@ -354,8 +345,8 @@
     <div class="payment-box">
       <div style="font-size: 0.85rem; color: var(--hint);">شماره کارت جهت واریز مبلغ:</div>
       
-      <div class="card-display" id="cardNum" onclick="copyCard()">6219 8618 1708 0335</div>
-      <div class="copy-hint" onclick="copyCard()">📋 برای کپی کردن شماره کارت، روی آن لمس کنید</div>
+      <div class="card-display" id="cardNum">6219 8618 1708 0335</div>
+      <div class="copy-hint" id="copyTextHint">📋 برای کپی کردن شماره کارت، روی آن لمس کنید</div>
 
       <div style="text-align: center; font-size: 0.9rem; color: var(--hint); margin-bottom: 12px;">
         به نام: <b style="color: var(--text);">آباده ئی</b>
@@ -364,106 +355,138 @@
       <label style="font-size: 0.85rem; color: var(--hint); display: block; margin-top: 14px;">
         کد پیگیری یا ۴ رقم آخر کارت واریزکننده:
       </label>
-      <input type="text" id="refId" placeholder="مثال: 1234 یا شماره پیگیری تراکنش">
+      <input type="text" id="refId" placeholder="مثال: 1234 یا شماره پیگیری">
     </div>
 
-    <button id="final-btn" class="btn-3d-main" onclick="finalizeOrder()">
+    <button type="button" id="btn-submit-order" class="btn-3d-main">
       ✅ ثبت سفارش و ارسال رسید
     </button>
   </div>
 
   <script>
-    const tg = window.Telegram ? window.Telegram.WebApp : null;
-    if (tg) {
-      tg.ready();
-      tg.expand();
+    // بستن ایمن آبجکت تلگرام تا خطای لودینگ ندهد
+    try {
+      if (window.Telegram && window.Telegram.WebApp) {
+        window.Telegram.WebApp.ready();
+        window.Telegram.WebApp.expand();
+      }
+    } catch(e) {
+      console.warn("Telegram WebApp not found");
     }
 
-    let currentOrder = {
-      plan: '',
-      price: ''
-    };
+    let selectedOrder = { plan: '', price: '' };
 
-    function goToPage(pageId) {
-      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    function showPage(pageId) {
+      const allPages = document.querySelectorAll('.page');
+      allPages.forEach(p => {
+        p.classList.remove('active');
+        p.style.display = 'none';
+      });
       const target = document.getElementById(pageId);
-      if (target) target.classList.add('active');
+      if (target) {
+        target.classList.add('active');
+        target.style.display = 'block';
+      }
       window.scrollTo(0, 0);
     }
 
-    function selectPlan(planName, planPrice) {
-      currentOrder.plan = planName;
-      currentOrder.price = planPrice;
-      
-      document.getElementById('summary-plan-name').innerText = planName;
-      document.getElementById('summary-plan-price').innerText = planPrice + ' تومان';
-      
-      goToPage('page-pay');
-    }
+    // اتصال رویداد کلیک دکمه خرید در صفحه اول
+    document.addEventListener('DOMContentLoaded', () => {
+      // دکمه صفحه اول
+      const goPlansBtn = document.getElementById('btn-go-plans');
+      if (goPlansBtn) {
+        goPlansBtn.onclick = () => showPage('page-plans');
+      }
 
-    function copyCard() {
-      const rawCard = "6219861817080335";
-      navigator.clipboard.writeText(rawCard).then(() => {
-        alert("شماره کارت کپی شد: " + rawCard);
+      // بازگشت‌ها
+      document.getElementById('btn-back-home').onclick = () => showPage('page-home');
+      document.getElementById('btn-back-plans').onclick = () => showPage('page-plans');
+
+      // کلیک روی پلن‌ها
+      document.querySelectorAll('.plan-btn-3d').forEach(btn => {
+        btn.onclick = function() {
+          const name = this.getAttribute('data-name');
+          const price = this.getAttribute('data-price');
+          selectedOrder.plan = name;
+          selectedOrder.price = price;
+          document.getElementById('summary-plan-name').innerText = name;
+          document.getElementById('summary-plan-price').innerText = price + ' تومان';
+          showPage('page-pay');
+        };
       });
-    }
 
-    async function finalizeOrder() {
-      const refInput = document.getElementById('refId');
-      const refId = refInput ? refInput.value.trim() : '';
-
-      if (!refId) {
-        alert('لطفاً کد پیگیری یا ۴ رقم آخر کارت را وارد نمایید.');
-        return;
-      }
-
-      const btn = document.getElementById('final-btn');
-      btn.innerText = '⏳ در حال ثبت سفارش...';
-      btn.disabled = true;
-
-      // دریافت اطلاعات کاربری مستقیم از آبجکت تلگرام
-      let userId = 100161863;
-      let userName = 'کاربر';
-      let userUsername = '';
-
-      if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) {
-        userId = tg.initDataUnsafe.user.id || userId;
-        userName = tg.initDataUnsafe.user.first_name || userName;
-        userUsername = tg.initDataUnsafe.user.username || '';
-      }
-
-      const payload = {
-        plan: currentOrder.plan || "یکماهه",
-        price: currentOrder.price || "0",
-        ref_id: refId,
-        user_id: userId,
-        user_name: userName,
-        username: userUsername
-      };
-
-      try {
-        const res = await fetch("https://netpro-bot.onrender.com/api/order", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload)
+      // کپی کارت
+      const doCopy = () => {
+        const raw = "6219861817080335";
+        navigator.clipboard.writeText(raw).then(() => {
+          alert("شماره کارت کپی شد: " + raw);
+        }).catch(() => {
+          alert("شماره کارت: " + raw);
         });
+      };
+      document.getElementById('cardNum').onclick = doCopy;
+      document.getElementById('copyTextHint').onclick = doCopy;
 
-        if (res.ok) {
-          alert("✅ سفارش شما با موفقیت ثبت شد!\nپیام تأیید در تلگرام برای شما ارسال گردید.");
-          if (tg) {
-            tg.close();
+      // ثبت نهایی
+      document.getElementById('btn-submit-order').onclick = async function() {
+        const refInput = document.getElementById('refId');
+        const refVal = refInput ? refInput.value.trim() : '';
+
+        if (!refVal) {
+          alert('لطفاً کد پیگیری یا ۴ رقم آخر کارت را بنویسید.');
+          return;
+        }
+
+        const btn = this;
+        btn.innerText = '⏳ در حال ارسال به بات...';
+        btn.disabled = true;
+
+        let userId = 100161863;
+        let userName = 'کاربر';
+        let username = '';
+
+        try {
+          if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe && window.Telegram.WebApp.initDataUnsafe.user) {
+            const u = window.Telegram.WebApp.initDataUnsafe.user;
+            userId = u.id || userId;
+            userName = u.first_name || userName;
+            username = u.username || '';
           }
-        } else {
-          alert("خطای سرور: " + res.status);
+        } catch(e) {}
+
+        const payload = {
+          plan: selectedOrder.plan,
+          price: selectedOrder.price,
+          ref_id: refVal,
+          user_id: userId,
+          user_name: userName,
+          username: username
+        };
+
+        try {
+          const res = await fetch("https://netpro-bot.onrender.com/api/order", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+          });
+
+          if (res.ok) {
+            alert("✅ سفارش شما ثبت شد! پیام تایید برای شما در تلگرام ارسال شد.");
+            if (window.Telegram && window.Telegram.WebApp) {
+              window.Telegram.WebApp.close();
+            }
+          } else {
+            alert("خطا در ثبت اطلاعات در سرور (کد: " + res.status + ")");
+            btn.innerText = '✅ ثبت سفارش و ارسال رسید';
+            btn.disabled = false;
+          }
+        } catch(err) {
+          alert("خطای شبکه یا مسدود شدن اینترنت: " + err.message);
           btn.innerText = '✅ ثبت سفارش و ارسال رسید';
           btn.disabled = false;
         }
-      } catch (e) {
-        alert("خطا در ارسال: " + e.message);
-        btn.innerText = '✅ ثبت سفارش و ارسال رسید';
-        btn.disabled = false;
-      }
-    }
+      };
+    });
   </script>
 </body>
 </html>
