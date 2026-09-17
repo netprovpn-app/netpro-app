@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>اپلیکیشن نت پرو</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    :root {
+      --bg: var(--tg-theme-bg-color, #0f172a);
+      --text: var(--tg-theme-text-color, #f8fafc);
+      --card-bg: var(--tg-theme-secondary-bg-color, #1e293b);
+      --primary: #3b82f6;
+      --primary-shadow: #1e40af;
+      --accent-green: #22c55e;
+      --hint: var(--tg-theme-hint-color, #94a3b8);
+    }
+
+    * {
+      box-sizing: border-box;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      margin: 0;
+      padding: 16px;
+      direction: rtl;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    .page {
+      display: none;
+      animation: fadeIn 0.25s ease-in-out;
+    }
+    .page.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* صفحه نخست */
+    .hero-title {
+      font-size: 1.55rem;
+      font-weight: 800;
+      text-align: center;
+      margin-top: 10px;
+      margin-bottom: 6px;
+      color: #60a5fa;
+      letter-spacing: -0.5px;
+    }
+
+    .hero-subtitle {
+      font-size: 1.02rem;
+      font-weight: 600;
+      text-align: center;
+      margin-bottom: 24px;
+      color: var(--text);
+      opacity: 0.9;
+    }
+
+    .features-card {
+      background: var(--card-bg);
+      border-radius: 16px;
+      padding: 18px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      margin-bottom: 30px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .features-title {
+      font-weight: 700;
+      font-size: 0.95rem;
+      margin-bottom: 12px;
+      color: #38bdf8;
+    }
+
+    .feature-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+
+    .feature-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.88rem;
+      line-height: 1.5;
+      color: var(--text);
+    }
+
+    .feature-badge {
+      background: rgba(56, 189, 248, 0.15);
+      color: #38bdf8;
+      width: 22px;
+      height: 22px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      font-size: 0.75rem;
+      flex-shrink: 0;
+    }
+
+    /* دکمه ۳ بعدی اصلی */
+    .btn-3d-main {
+      width: 100%;
+      max-width: 320px;
+      margin: 0 auto;
+      display: block;
+      padding: 16px;
+      background: linear-gradient(180deg, #3b82f6 0%, #2563eb 100%);
+      color: #ffffff;
+      border: none;
+      border-radius: 14px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 6px 0 var(--primary-shadow), 0 10px 18px rgba(37, 99, 235, 0.35);
+      transition: all 0.1s ease;
+      position: relative;
+      top: 0;
+    }
+
+    .btn-3d-main:active {
+      top: 4px;
+      box-shadow: 0 2px 0 var(--primary-shadow), 0 4px 8px rgba(37, 99, 235, 0.2);
+    }
+
+    /* دکمه‌های ۳ بعدی پلن‌ها */
+    .section-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .plans-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+
+    .plan-btn-3d {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 18px;
+      background: var(--card-bg);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 14px;
+      color: var(--text);
+      cursor: pointer;
+      position: relative;
+      top: 0;
+      box-shadow: 0 5px 0 rgba(0, 0, 0, 0.4), 0 8px 12px rgba(0, 0, 0, 0.2);
+      transition: all 0.1s ease;
+    }
+
+    .plan-btn-3d:active {
+      top: 4px;
+      box-shadow: 0 1px 0 rgba(0, 0, 0, 0.4), 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .plan-name {
+      font-size: 0.96rem;
+      font-weight: 700;
+    }
+
+    .plan-price-tag {
+      background: rgba(34, 197, 94, 0.15);
+      color: var(--accent-green);
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      border: 1px solid rgba(34, 197, 94, 0.3);
+    }
+
+    .back-btn {
+      background: transparent;
+      border: none;
+      color: var(--hint);
+      font-size: 0.9rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      margin-bottom: 14px;
+      padding: 4px 0;
+    }
+
+    /* صفحه سوم (واریز) */
+    .selected-summary {
+      background: rgba(59, 130, 246, 0.1);
+      border: 1px solid rgba(59, 130, 246, 0.25);
+      border-radius: 12px;
+      padding: 14px;
+      margin-bottom: 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .payment-box {
+      background: var(--card-bg);
+      border-radius: 14px;
+      padding: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      margin-bottom: 20px;
+    }
+
+    .card-display {
+      direction: ltr;
+      font-size: 1.22rem;
+      font-weight: 800;
+      text-align: center;
+      background: rgba(0, 0, 0, 0.3);
+      padding: 12px;
+      border-radius: 10px;
+      margin: 10px 0 6px 0;
+      color: #38bdf8;
+      letter-spacing: 1.8px;
+      border: 1px dashed rgba(56, 189, 248, 0.35);
+      cursor: pointer;
+    }
+
+    .copy-hint {
+      text-align: center;
+      font-size: 0.75rem;
+      color: var(--hint);
+      margin-bottom: 10px;
+      cursor: pointer;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 14px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      background: rgba(0, 0, 0, 0.25);
+      color: var(--text);
+      font-size: 0.95rem;
+      margin-top: 8px;
+      outline: none;
+    }
+
+    input[type="text"]:focus {
+      border-color: #3b82f6;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- صفحه ۱: خانه و مشخصات سرویس -->
+  <div id="page-home" class="page active">
+    <div class="hero-title">به اپلیکیشن نت پرو خوش آمدید</div>
+    <div class="hero-subtitle">در اپلیکیشن نت پرو به راحتی اشتراک VPN خود را خریداری کنید.</div>
+
+    <div class="features-card">
+      <div class="features-title">✨ ویژگی‌های اختصاصی سرویس‌های نت پرو:</div>
+      <ul class="feature-list">
+        <li class="feature-item"><span class="feature-badge">✓</span> کاربری نامحدود بدون محدودیت دستگاه</li>
+        <li class="feature-item"><span class="feature-badge">✓</span> مولتی لوکیشن با سرورهای قدرتمند</li>
+        <li class="feature-item"><span class="feature-badge">✓</span> دارای آیپی ثابت و اختصاصی</li>
+        <li class="feature-item"><span class="feature-badge">✓</span> کاملاً سازگار با ابزارهای هوش مصنوعی (ChatGPT و...)</li>
+        <li class="feature-item"><span class="feature-badge">✓</span> برقراری اتصال در شرایط اینترنت ملی</li>
+        <li class="feature-item"><span class="feature-badge">✓</span> پهنای باند اختصاصی و سرعت حداکثری</li>
+      </ul>
+    </div>
+
+    <button class="btn-3d-main" onclick="goToPage('page-plans')">
+      🛍 خرید اشتراک
+    </button>
+  </div>
+
+  <!-- صفحه ۲: تعرفه‌ها با دکمه‌های ۳ بعدی -->
+  <div id="page-plans" class="page">
+    <button class="back-btn" onclick="goToPage('page-home')">← بازگشت به صفحه اصلی</button>
+    <div class="section-title">انتخاب پلن اشتراک</div>
+
+    <div class="plans-grid">
+      <div class="plan-btn-3d" onclick="selectPlan('یکماهه ۱۰ گیگابایت', '137,000')">
+        <span class="plan-name">یکماهه ۱۰ گیگابایت</span>
+        <span class="plan-price-tag">۱۳۷,۰۰۰ تومان</span>
+      </div>
+
+      <div class="plan-btn-3d" onclick="selectPlan('یکماهه ۲۰ گیگابایت', '264,000')">
+        <span class="plan-name">یکماهه ۲۰ گیگابایت</span>
+        <span class="plan-price-tag">۲۶۴,۰۰۰ تومان</span>
+      </div>
+
+      <div class="plan-btn-3d" onclick="selectPlan('یکماهه ۳۰ گیگابایت', '384,000')">
+        <span class="plan-name">یکماهه ۳۰ گیگابایت</span>
+        <span class="plan-price-tag">۳۸۴,۰۰۰ تومان</span>
+      </div>
+
+      <div class="plan-btn-3d" onclick="selectPlan('یکماهه ۵۰ گیگابایت', '554,000')">
+        <span class="plan-name">یکماهه ۵۰ گیگابایت</span>
+        <span class="plan-price-tag">۵۵۴,۰۰۰ تومان</span>
+      </div>
+
+      <div class="plan-btn-3d" onclick="selectPlan('یکماهه ۷۵ گیگابایت', '814,000')">
+        <span class="plan-name">یکماهه ۷۵ گیگابایت</span>
+        <span class="plan-price-tag">۸۱۴,۰۰۰ تومان</span>
+      </div>
+
+      <div class="plan-btn-3d" onclick="selectPlan('یکماهه ۱۰۰ گیگابایت', '1,000,000')">
+        <span class="plan-name">یکماهه ۱۰۰ گیگابایت</span>
+        <span class="plan-price-tag">۱,۰۰۰,۰۰۰ تومان</span>
+      </div>
+
+      <div class="plan-btn-3d" onclick="selectPlan('یکماهه ۱۵۰ گیگابایت', '1,484,000')">
+        <span class="plan-name">یکماهه ۱۵۰ گیگابایت</span>
+        <span class="plan-price-tag">۱,۴۸۴,۰۰۰ تومان</span>
+      </div>
+
+      <div class="plan-btn-3d" onclick="selectPlan('یکماهه ۲۰۰ گیگابایت', '1,854,000')">
+        <span class="plan-name">یکماهه ۲۰۰ گیگابایت</span>
+        <span class="plan-price-tag">۱,۸۵۴,۰۰۰ تومان</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- صفحه ۳: پرداخت و واریز -->
+  <div id="page-pay" class="page">
+    <button class="back-btn" onclick="goToPage('page-plans')">← تغییر پلن</button>
+    
+    <div class="selected-summary">
+      <div>
+        <div style="font-size: 0.8rem; color: var(--hint);">پلن انتخاب شده:</div>
+        <strong id="summary-plan-name" style="font-size: 1rem;">-</strong>
+      </div>
+      <div id="summary-plan-price" style="font-weight: 800; color: var(--accent-green); font-size: 1.05rem;">-</div>
+    </div>
+
+    <div class="payment-box">
+      <div style="font-size: 0.85rem; color: var(--hint);">شماره کارت جهت واریز مبلغ:</div>
+      
+      <!-- شماره کارت و قابلیت کپی سریع -->
+      <div class="card-display" id="cardNum" onclick="copyCard()">6219 8618 1708 0335</div>
+      <div class="copy-hint" onclick="copyCard()">📋 برای کپی کردن شماره کارت، روی آن لمس کنید</div>
+
+      <div style="text-align: center; font-size: 0.9rem; color: var(--hint); margin-bottom: 12px;">
+        به نام: <b style="color: var(--text);">آباده ئی</b>
+      </div>
+
+      <label style="font-size: 0.85rem; color: var(--hint); display: block; margin-top: 14px;">
+        کد پیگیری یا ۴ رقم آخر کارت واریزکننده:
+      </label>
+      <input type="text" id="refId" placeholder="مثال: 1234 یا شماره پیگیری تراکنش">
+    </div>
+
+    <button class="btn-3d-main" onclick="finalizeOrder()">
+      ✅ ثبت سفارش و ارسال رسید
+    </button>
+  </div>
+
+  <script>
+    const tg = window.Telegram.WebApp;
+    tg.ready();
+    tg.expand();
+
+    let currentOrder = {
+      plan: '',
+      price: ''
+    };
+
+    function goToPage(pageId) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.getElementById(pageId).classList.add('active');
+      window.scrollTo(0, 0);
+    }
+
+    function selectPlan(planName, planPrice) {
+      currentOrder.plan = planName;
+      currentOrder.price = planPrice;
+      
+      document.getElementById('summary-plan-name').innerText = planName;
+      document.getElementById('summary-plan-price').innerText = planPrice + ' تومان';
+      
+      goToPage('page-pay');
+    }
+
+    function copyCard() {
+      const rawCard = "6219861817080335";
+      navigator.clipboard.writeText(rawCard).then(() => {
+        if (tg.showAlert) {
+          tg.showAlert("شماره کارت کپی شد: " + rawCard);
+        } else {
+          alert("شماره کارت کپی شد.");
+        }
+      });
+    }
+
+    function finalizeOrder() {
+      const refId = document.getElementById('refId').value.trim();
+
+      if (!refId) {
+        tg.showAlert('لطفاً شماره پیگیری یا ۴ رقم آخر کارت را وارد نمایید.');
+        return;
+      }
+
+      const payload = {
+        plan: currentOrder.plan,
+        price: currentOrder.price,
+        ref_id: refId
+      };
+
+      tg.sendData(JSON.stringify(payload));
+      tg.close();
+    }
+  </script>
+</body>
+</html>
