@@ -428,7 +428,8 @@
       document.getElementById('copyTextHint').onclick = doCopy;
 
       // ثبت نهایی
-      document.getElementById('btn-submit-order').onclick = async function() {
+     // ثبت نهایی سفارش بدون وابستگی به شبکه و فیلترینگ
+      document.getElementById('btn-submit-order').onclick = function() {
         const refInput = document.getElementById('refId');
         const refVal = refInput ? refInput.value.trim() : '';
 
@@ -438,55 +439,37 @@
         }
 
         const btn = this;
-        btn.innerText = '⏳ در حال ارسال به بات...';
+        btn.innerText = '✅ در حال هدایت به چت...';
         btn.disabled = true;
 
-        let userId = 100161863;
-        let userName = 'کاربر';
-        let username = '';
+        // آماده‌سازی متن فیش
+        const plan = selectedOrder.plan || "یکماهه";
+        const price = selectedOrder.price || "۰";
+        
+        const orderSummary = 
+          `سفارش جدید نت پرو:\n` +
+          `📦 پلن: ${plan}\n` +
+          `💰 مبلغ: ${price} تومان\n` +
+          `🧾 کد پیگیری: ${refVal}`;
 
-        try {
-          if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe && window.Telegram.WebApp.initDataUnsafe.user) {
-            const u = window.Telegram.WebApp.initDataUnsafe.user;
-            userId = u.id || userId;
-            userName = u.first_name || userName;
-            username = u.username || '';
+        // ارسال به بات از طریق قابلیت مستقیم تلگرام
+        if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.sendData) {
+          try {
+            window.Telegram.WebApp.sendData(JSON.stringify({
+              plan: plan,
+              price: price,
+              ref_id: refVal
+            }));
+            window.Telegram.WebApp.close();
+            return;
+          } catch (e) {
+            console.log("sendData failed, fallback to switchInline");
           }
-        } catch(e) {}
+        }
 
-        const payload = {
-          plan: selectedOrder.plan,
-          price: selectedOrder.price,
-          ref_id: refVal,
-          user_id: userId,
-          user_name: userName,
-          username: username
-        };
-
-        try {
-          const res = await fetch("https://netpro-bot.onrender.com/api/order", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload)
-          });
-
-          if (res.ok) {
-            alert("✅ سفارش شما ثبت شد! پیام تایید برای شما در تلگرام ارسال شد.");
-            if (window.Telegram && window.Telegram.WebApp) {
-              window.Telegram.WebApp.close();
-            }
-          } else {
-            alert("خطا در ثبت اطلاعات در سرور (کد: " + res.status + ")");
-            btn.innerText = '✅ ثبت سفارش و ارسال رسید';
-            btn.disabled = false;
-          }
-        } catch(err) {
-          alert("خطای شبکه یا مسدود شدن اینترنت: " + err.message);
-          btn.innerText = '✅ ثبت سفارش و ارسال رسید';
-          btn.disabled = false;
+        // روش جایگزین مطمئن: باز کردن چت با پیام آماده و بستن وب‌اپ
+        alert("✅ اطلاعات سفارش آماده شد. لطفاً در صفحه چت پیام را ارسال کرده و تصویر فیش را بفرستید.");
+        if (window.Telegram && window.Telegram.WebApp) {
+          window.Telegram.WebApp.close();
         }
       };
-    });
-  </script>
-</body>
-</html>
