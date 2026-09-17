@@ -112,6 +112,7 @@
       flex-shrink: 0;
     }
 
+    /* دکمه‌های ۳ بعدی */
     .btn-3d-main {
       width: 100%;
       max-width: 320px;
@@ -357,7 +358,7 @@
     </div>
 
     <button type="button" id="btn-submit-order" class="btn-3d-main">
-      ✅ ارسال به چت و تایید سفارش
+      ✅ ثبت سفارش و ارسال رسید
     </button>
   </div>
 
@@ -411,7 +412,7 @@
       document.getElementById('cardNum').onclick = copyAction;
       document.getElementById('copyTextHint').onclick = copyAction;
 
-      // ثبت سفارش بدون هرگونه درخواست fetch یا اینترنت خارجی
+      // ثبت سفارش و کپی مستقیم در حافظه گوشی کاربر
       document.getElementById('btn-submit-order').onclick = function() {
         const refInput = document.getElementById('refId');
         const refVal = refInput ? refInput.value.trim() : '';
@@ -424,34 +425,24 @@
         const plan = selectedOrder.plan || "یکماهه";
         const price = selectedOrder.price || "۰";
 
-        // اول تلاش مستقیم از طریق پروتکل درونی تلگرام (اگر از دکمه کیبورد باز شده باشد)
-        if (tg && tg.sendData) {
-          try {
-            tg.sendData(JSON.stringify({
-              plan: plan,
-              price: price,
-              ref_id: refVal
-            }));
-            tg.close();
-            return;
-          } catch(e) {}
-        }
-
-        // اگر از منو بات باز شده بود، متن را آماده و به تلگرام ارسال می‌کنیم
-        const messageText = encodeURIComponent(
-          `سلام، سفارش جدید ثبت کردم:\n\n` +
+        const textToCopy = 
+          `سفارش جدید نت پرو:\n` +
           `📦 پلن: ${plan}\n` +
           `💰 مبلغ: ${price} تومان\n` +
-          `🧾 کد پیگیری: ${refVal}\n\n` +
-          `تصویر فیش واریزی را هم ضمیمه می‌کنم:`
-        );
+          `🧾 کد پیگیری: ${refVal}`;
 
-        if (tg && tg.openTelegramLink) {
-          tg.openTelegramLink(`https://t.me/share/url?url=${messageText}`);
-          tg.close();
-        } else {
-          window.location.href = `https://t.me/share/url?url=${messageText}`;
-        }
+        // کپی خودکار مشخصات خرید
+        navigator.clipboard.writeText(textToCopy).then(() => {
+          alert("✅ مشخصات سفارش شما کپی شد!\n\nاکنون در کادر پیام چت، انگشت خود را نگه دارید و گزینه Paste (چسباندن) را بزنید و پیام را ارسال کنید.");
+          if (tg) {
+            tg.close();
+          }
+        }).catch(() => {
+          alert("مشخصات سفارش شما:\n\n" + textToCopy + "\n\nلطفاً این متن را به چت ربات ارسال کنید.");
+          if (tg) {
+            tg.close();
+          }
+        });
       };
     });
   </script>
