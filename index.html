@@ -423,7 +423,7 @@
       document.getElementById('cardNum').onclick = copyCard;
       document.getElementById('copyTextHint').onclick = copyCard;
 
-      // هدایت خودکار به چت ربات و ثبت فاکتور
+      // ثبت و ارسال مستقیم از طریق متد بومی تلگرام
       document.getElementById('btn-submit-order').onclick = function() {
         const refInput = document.getElementById('refId');
         const refVal = refInput ? refInput.value.trim() : '';
@@ -433,21 +433,32 @@
           return;
         }
 
-        const safePlan = (selectedOrder.plan || "یکماهه-۲۰-گیگابایت").replace(/\s+/g, '-');
-        const safePrice = (selectedOrder.price || "۲۶۴,۰۰۰").replace(/,/g, '-');
-        const safeRef = encodeURIComponent(refVal.replace(/\s+/g, ''));
+        const payload = {
+          plan: selectedOrder.plan || "یکماهه ۲۰ گیگابایت",
+          price: selectedOrder.price || "۲۶۴,۰۰۰",
+          ref_id: refVal
+        };
 
-        // ایجاد لینک شروع خودکار همراه با داده‌های سفارش
-        const botDeepLink = `https://t.me/netprovpn_bot?start=order_${safePlan}_${safePrice}_${safeRef}`;
+        const dataStr = JSON.stringify(payload);
 
-        if (tg && tg.openTelegramLink) {
-          tg.openTelegramLink(botDeepLink);
-        } else {
-          window.location.href = botDeepLink;
+        // ارسال مستقیم به ربات با پشتیبانی از هر دو متد تلگرام
+        if (tg && tg.sendData) {
+          try {
+            tg.sendData(dataStr);
+            return;
+          } catch (e) {}
         }
 
-        if (tg && tg.close) {
-          tg.close();
+        // اگر داخل وب‌ویو اینلاین بود، با دکمه اصلی تلگرام ارسال کن
+        if (tg && tg.MainButton) {
+          tg.MainButton.text = "ارسال فاکتور به چت ربات";
+          tg.MainButton.show();
+          tg.MainButton.onClick(() => {
+            tg.sendData(dataStr);
+          });
+          alert("✅ مشخصات ثبت شد. لطفاً دکمه آبی رنگ پایین صفحه را برای تایید لمس کنید.");
+        } else {
+          alert("لطفاً مینی‌اپ را از داخل تلگرام باز کنید.");
         }
       };
     });
