@@ -122,7 +122,7 @@
       color: #ffffff;
       border: none;
       border-radius: 14px;
-      font-size: 1.1rem;
+      font-size: 1.05rem;
       font-weight: 700;
       cursor: pointer;
       box-shadow: 0 6px 0 var(--primary-shadow), 0 10px 18px rgba(37, 99, 235, 0.35);
@@ -135,13 +135,6 @@
     .btn-3d-main:active {
       top: 4px;
       box-shadow: 0 2px 0 var(--primary-shadow), 0 4px 8px rgba(37, 99, 235, 0.2);
-    }
-
-    .btn-3d-main:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-      top: 0;
-      box-shadow: none;
     }
 
     .section-title {
@@ -261,6 +254,29 @@
       margin-top: 8px;
       outline: none;
     }
+
+    .upload-btn-label {
+      display: block;
+      border: 2px dashed rgba(59, 130, 246, 0.5);
+      border-radius: 12px;
+      padding: 14px;
+      text-align: center;
+      color: #60a5fa;
+      cursor: pointer;
+      margin-top: 14px;
+      font-size: 0.9rem;
+      background: rgba(59, 130, 246, 0.05);
+    }
+
+    #preview-img {
+      max-width: 100%;
+      max-height: 180px;
+      border-radius: 10px;
+      margin-top: 10px;
+      display: none;
+      object-fit: contain;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
   </style>
 </head>
 <body>
@@ -297,37 +313,30 @@
         <span class="plan-name">یکماهه ۱۰ گیگابایت</span>
         <span class="plan-price-tag">۱۳۷,۰۰۰ تومان</span>
       </div>
-
       <div class="plan-btn-3d" data-name="یکماهه ۲۰ گیگابایت" data-price="264,000">
         <span class="plan-name">یکماهه ۲۰ گیگابایت</span>
         <span class="plan-price-tag">۲۶۴,۰۰۰ تومان</span>
       </div>
-
       <div class="plan-btn-3d" data-name="یکماهه ۳۰ گیگابایت" data-price="384,000">
         <span class="plan-name">یکماهه ۳۰ گیگابایت</span>
         <span class="plan-price-tag">۳۸۴,۰۰۰ تومان</span>
       </div>
-
       <div class="plan-btn-3d" data-name="یکماهه ۵۰ گیگابایت" data-price="554,000">
         <span class="plan-name">یکماهه ۵۰ گیگابایت</span>
         <span class="plan-price-tag">۵۵۴,۰۰۰ تومان</span>
       </div>
-
       <div class="plan-btn-3d" data-name="یکماهه ۷۵ گیگابایت" data-price="814,000">
         <span class="plan-name">یکماهه ۷۵ گیگابایت</span>
         <span class="plan-price-tag">۸۱۴,۰۰۰ تومان</span>
       </div>
-
       <div class="plan-btn-3d" data-name="یکماهه ۱۰۰ گیگابایت" data-price="1,000,000">
         <span class="plan-name">یکماهه ۱۰۰ گیگابایت</span>
         <span class="plan-price-tag">۱,۰۰۰,۰۰۰ تومان</span>
       </div>
-
       <div class="plan-btn-3d" data-name="یکماهه ۱۵۰ گیگابایت" data-price="1,484,000">
         <span class="plan-name">یکماهه ۱۵۰ گیگابایت</span>
         <span class="plan-price-tag">۱,۴۸۴,۰۰۰ تومان</span>
       </div>
-
       <div class="plan-btn-3d" data-name="یکماهه ۲۰۰ گیگابایت" data-price="1,854,000">
         <span class="plan-name">یکماهه ۲۰۰ گیگابایت</span>
         <span class="plan-price-tag">۱,۸۵۴,۰۰۰ تومان</span>
@@ -335,7 +344,7 @@
     </div>
   </div>
 
-  <!-- صفحه ۳: پرداخت -->
+  <!-- صفحه ۳: پرداخت و آپلود رسید -->
   <div id="page-pay" class="page">
     <button type="button" id="btn-back-plans" class="back-btn">← تغییر پلن</button>
     
@@ -349,28 +358,31 @@
 
     <div class="payment-box">
       <div style="font-size: 0.85rem; color: var(--hint);">شماره کارت جهت واریز مبلغ:</div>
-      
       <div class="card-display" id="cardNum">6219 8618 1708 0335</div>
-      <div class="copy-hint" id="copyTextHint">📋 برای کپی کردن شماره کارت، روی آن لمس کنید</div>
-
+      <div class="copy-hint" id="copyTextHint">📋 لمس کنید تا شماره کارت کپی شود</div>
       <div style="text-align: center; font-size: 0.9rem; color: var(--hint); margin-bottom: 12px;">
         به نام: <b style="color: var(--text);">آباده ئی</b>
       </div>
 
       <label style="font-size: 0.85rem; color: var(--hint); display: block; margin-top: 14px;">
-        کد پیگیری یا ۴ رقم آخر کارت واریزکننده:
+        کد پیگیری یا ۴ رقم آخر کارت:
       </label>
-      <input type="text" id="refId" placeholder="مثال: 1234 یا شماره پیگیری">
+      <input type="text" id="refId" placeholder="مثال: 987654 یا 1234">
+
+      <label class="upload-btn-label" for="receiptFile">
+        📷 انتخاب تصویر فیش واریزی
+      </label>
+      <input type="file" id="receiptFile" accept="image/*" style="display: none;">
+      <center><img id="preview-img" alt="پیش‌نمایش رسید"></center>
     </div>
 
     <button type="button" id="btn-submit-order" class="btn-3d-main">
-      ✅ ثبت سفارش و ارسال رسید
+      ✅ تکمیل خرید و ارسال فیش
     </button>
   </div>
 
   <script>
     const SERVER_API_URL = "http://82.115.25.138:8080/api/order";
-
     const tg = window.Telegram ? window.Telegram.WebApp : null;
     if (tg) {
       tg.ready();
@@ -378,6 +390,7 @@
     }
 
     let selectedOrder = { plan: '', price: '' };
+    let receiptBase64 = null;
 
     function showPage(pageId) {
       document.querySelectorAll('.page').forEach(p => {
@@ -409,7 +422,7 @@
         };
       });
 
-      const copyAction = () => {
+      const copyCard = () => {
         const raw = "6219861817080335";
         navigator.clipboard.writeText(raw).then(() => {
           alert("شماره کارت کپی شد: " + raw);
@@ -417,21 +430,41 @@
           alert("شماره کارت: " + raw);
         });
       };
-      document.getElementById('cardNum').onclick = copyAction;
-      document.getElementById('copyTextHint').onclick = copyAction;
+      document.getElementById('cardNum').onclick = copyCard;
+      document.getElementById('copyTextHint').onclick = copyCard;
 
-      // ثبت و ارسال سفارش به سرور اختصاصی
+      // خواندن فایل عکس و تبدیل به بیس۶۴ برای ارسال
+      document.getElementById('receiptFile').onchange = function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+          receiptBase64 = evt.target.result;
+          const preview = document.getElementById('preview-img');
+          preview.src = receiptBase64;
+          preview.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+      };
+
+      // ثبت و ارسال مستقیم
       document.getElementById('btn-submit-order').onclick = async function() {
         const refInput = document.getElementById('refId');
         const refVal = refInput ? refInput.value.trim() : '';
 
         if (!refVal) {
-          alert('لطفاً کد پیگیری یا ۴ رقم آخر کارت را وارد کنید.');
+          alert('لطفاً شماره پیگیری یا ۴ رقم آخر کارت را وارد فرمایید.');
+          return;
+        }
+
+        if (!receiptBase64) {
+          alert('لطفاً عکس فیش واریزی را انتخاب فرمایید.');
           return;
         }
 
         const btn = this;
-        btn.innerText = '⏳ در حال ثبت سفارش...';
+        btn.innerText = '⏳ در حال ارسال سفارش و فیش...';
         btn.disabled = true;
 
         const user = (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) ? tg.initDataUnsafe.user : {};
@@ -440,6 +473,7 @@
           plan: selectedOrder.plan || "یکماهه",
           price: selectedOrder.price || "۰",
           ref_id: refVal,
+          receipt_base64: receiptBase64,
           user_id: user.id || null,
           user_name: user.first_name || "کاربر",
           username: user.username || "ندارد"
@@ -453,28 +487,16 @@
           });
 
           if (response.ok) {
-            alert("✅ سفارش شما با موفقیت ثبت شد!\n\nلطفاً در صفحه چت ربات، تصویر فیش واریزی را ارسال کنید.");
+            alert("✅ سفارش و تصویر فیش با موفقیت ارسال شد!\nبه صفحه چت ربات هدایت می‌شوید.");
             if (tg) tg.close();
           } else {
-            throw new Error("HTTP Status: " + response.status);
+            throw new Error("Err");
           }
         } catch (err) {
-          // در صورت بروز اختلال لحظه‌ای، از سیستم کپی پشتیبان استفاده می‌کند
-          const backupText = 
-            `سفارش جدید نت پرو:\n` +
-            `📦 پلن: ${payload.plan}\n` +
-            `💰 مبلغ: ${payload.price} تومان\n` +
-            `🧾 کد پیگیری: ${payload.ref_id}`;
-
-          navigator.clipboard.writeText(backupText).then(() => {
-            alert("✅ مشخصات سفارش کپی شد!\n\nلطفاً در صفحه چت ربات، متن را Paste کنید و همراه فیش بفرستید.");
-            if (tg) tg.close();
-          }).catch(() => {
-            alert("مشخصات سفارش آماده شد:\n\n" + backupText);
-            if (tg) tg.close();
-          });
+          alert("خطا در ارسال تصویر فیش. لطفاً تصویر را مستقیماً در چت ربات ارسال فرمایید.");
+          if (tg) tg.close();
         } finally {
-          btn.innerText = '✅ ثبت سفارش و ارسال رسید';
+          btn.innerText = '✅ تکمیل خرید و ارسال فیش';
           btn.disabled = false;
         }
       };
