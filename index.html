@@ -353,17 +353,17 @@
       </div>
 
       <label style="font-size: 0.85rem; color: var(--hint); display: block; margin-top: 14px;">
-        کد پیگیری یا ۴ رقم آخر کارت:
+        کد پیگیری یا شماره تراکنش:
       </label>
-      <input type="text" id="refId" placeholder="مثال: 987654 یا 1234">
+      <input type="text" id="refId" placeholder="مثال: 987654321">
 
       <div class="step-hint">
-        💡 پس از زدن دکمه زیر، مشخصات سفارش در کادر پیام شما آماده می‌شود؛ کافیست آن را Send کرده و عکس فیش را ارسال فرمایید.
+        💡 پس از زدن دکمه زیر، مشخصات سفارش در ربات ثبت شده و پیام درخواست ارسال فیش برای شما نمایش داده می‌شود.
       </div>
     </div>
 
     <button type="button" id="btn-submit-order" class="btn-3d-main">
-      ✅ ثبت سفارش و ارسال فیش
+      ✅ تایید پرداخت و ثبت نهایی
     </button>
   </div>
 
@@ -423,32 +423,27 @@
       document.getElementById('cardNum').onclick = copyCard;
       document.getElementById('copyTextHint').onclick = copyCard;
 
-      // هدایت مستقیم و مطمئن به چت با متن سفارش آماده
+      // هدایت خودکار به چت ربات و ثبت فاکتور
       document.getElementById('btn-submit-order').onclick = function() {
         const refInput = document.getElementById('refId');
         const refVal = refInput ? refInput.value.trim() : '';
 
         if (!refVal) {
-          alert('لطفاً کد پیگیری یا ۴ رقم آخر کارت را وارد فرمایید.');
+          alert('لطفاً شماره تراکنش یا کد پیگیری را وارد فرمایید.');
           return;
         }
 
-        const planName = selectedOrder.plan || "یکماهه ۲۰ گیگابایت";
-        const planPrice = selectedOrder.price || "۲۶۴,۰۰۰";
+        const safePlan = (selectedOrder.plan || "یکماهه-۲۰-گیگابایت").replace(/\s+/g, '-');
+        const safePrice = (selectedOrder.price || "۲۶۴,۰۰۰").replace(/,/g, '-');
+        const safeRef = encodeURIComponent(refVal.replace(/\s+/g, ''));
 
-        const textMessage = 
-          `سفارش_نت_پرو\n` +
-          `📦 پلن: ${planName}\n` +
-          `💰 مبلغ: ${planPrice} تومان\n` +
-          `🔢 پیگیری: ${refVal}`;
-
-        // ارسال از طریق لینک اشتراک رسمی تلگرام
-        const targetUrl = `https://t.me/share/url?url=${encodeURIComponent(textMessage)}`;
+        // ایجاد لینک شروع خودکار همراه با داده‌های سفارش
+        const botDeepLink = `https://t.me/netprovpn_bot?start=order_${safePlan}_${safePrice}_${safeRef}`;
 
         if (tg && tg.openTelegramLink) {
-          tg.openTelegramLink(targetUrl);
+          tg.openTelegramLink(botDeepLink);
         } else {
-          window.location.href = targetUrl;
+          window.location.href = botDeepLink;
         }
 
         if (tg && tg.close) {
