@@ -112,7 +112,6 @@
       flex-shrink: 0;
     }
 
-    /* دکمه‌های ۳ بعدی */
     .btn-3d-main {
       width: 100%;
       max-width: 320px;
@@ -136,6 +135,13 @@
     .btn-3d-main:active {
       top: 4px;
       box-shadow: 0 2px 0 var(--primary-shadow), 0 4px 8px rgba(37, 99, 235, 0.2);
+    }
+
+    .btn-3d-main:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      top: 0;
+      box-shadow: none;
     }
 
     .section-title {
@@ -363,6 +369,8 @@
   </div>
 
   <script>
+    const SERVER_API_URL = "http://82.115.25.138:8080/api/order";
+
     const tg = window.Telegram ? window.Telegram.WebApp : null;
     if (tg) {
       tg.ready();
@@ -412,8 +420,8 @@
       document.getElementById('cardNum').onclick = copyAction;
       document.getElementById('copyTextHint').onclick = copyAction;
 
-      // ثبت سفارش و کپی مستقیم در حافظه گوشی کاربر
-      document.getElementById('btn-submit-order').onclick = function() {
+      // ثبت و ارسال سفارش به سرور اختصاصی
+      document.getElementById('btn-submit-order').onclick = async function() {
         const refInput = document.getElementById('refId');
         const refVal = refInput ? refInput.value.trim() : '';
 
@@ -422,27 +430,53 @@
           return;
         }
 
-        const plan = selectedOrder.plan || "یکماهه";
-        const price = selectedOrder.price || "۰";
+        const btn = this;
+        btn.innerText = '⏳ در حال ثبت سفارش...';
+        btn.disabled = true;
 
-        const textToCopy = 
-          `سفارش جدید نت پرو:\n` +
-          `📦 پلن: ${plan}\n` +
-          `💰 مبلغ: ${price} تومان\n` +
-          `🧾 کد پیگیری: ${refVal}`;
+        const user = (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) ? tg.initDataUnsafe.user : {};
 
-        // کپی خودکار مشخصات خرید
-        navigator.clipboard.writeText(textToCopy).then(() => {
-          alert("✅ مشخصات سفارش شما کپی شد!\n\nاکنون در کادر پیام چت، انگشت خود را نگه دارید و گزینه Paste (چسباندن) را بزنید و پیام را ارسال کنید.");
-          if (tg) {
-            tg.close();
+        const payload = {
+          plan: selectedOrder.plan || "یکماهه",
+          price: selectedOrder.price || "۰",
+          ref_id: refVal,
+          user_id: user.id || null,
+          user_name: user.first_name || "کاربر",
+          username: user.username || "ندارد"
+        };
+
+        try {
+          const response = await fetch(SERVER_API_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+          });
+
+          if (response.ok) {
+            alert("✅ سفارش شما با موفقیت ثبت شد!\n\nلطفاً در صفحه چت ربات، تصویر فیش واریزی را ارسال کنید.");
+            if (tg) tg.close();
+          } else {
+            throw new Error("HTTP Status: " + response.status);
           }
-        }).catch(() => {
-          alert("مشخصات سفارش شما:\n\n" + textToCopy + "\n\nلطفاً این متن را به چت ربات ارسال کنید.");
-          if (tg) {
-            tg.close();
-          }
-        });
+        } catch (err) {
+          // در صورت بروز اختلال لحظه‌ای، از سیستم کپی پشتیبان استفاده می‌کند
+          const backupText = 
+            `سفارش جدید نت پرو:\n` +
+            `📦 پلن: ${payload.plan}\n` +
+            `💰 مبلغ: ${payload.price} تومان\n` +
+            `🧾 کد پیگیری: ${payload.ref_id}`;
+
+          navigator.clipboard.writeText(backupText).then(() => {
+            alert("✅ مشخصات سفارش کپی شد!\n\nلطفاً در صفحه چت ربات، متن را Paste کنید و همراه فیش بفرستید.");
+            if (tg) tg.close();
+          }).catch(() => {
+            alert("مشخصات سفارش آماده شد:\n\n" + backupText);
+            if (tg) tg.close();
+          });
+        } finally {
+          btn.innerText = '✅ ثبت سفارش و ارسال رسید';
+          btn.disabled = false;
+        }
       };
     });
   </script>
