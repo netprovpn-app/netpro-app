@@ -332,7 +332,7 @@
     </div>
   </div>
 
-  <!-- صفحه ۳: پرداخت و تایید -->
+  <!-- صفحه ۳: پرداخت و ثبت نهایی -->
   <div id="page-pay" class="page">
     <button type="button" id="btn-back-plans" class="back-btn">← تغییر پلن</button>
     
@@ -358,7 +358,7 @@
       <input type="text" id="refId" placeholder="مثال: 987654 یا 1234">
 
       <div class="step-hint">
-        💡 پس از زدن دکمه زیر، مشخصات سفارش شما ذخیره شده و پنجره بسته می‌شود تا تصویر فیش واریزی را در صفحه چت ربات ارسال فرمایید.
+        💡 پس از زدن دکمه زیر، سفارش شما ثبت شده و مینی‌اپ بسته می‌شود تا تصویر فیش واریزی را در صفحه چت ربات ارسال فرمایید.
       </div>
     </div>
 
@@ -368,6 +368,7 @@
   </div>
 
   <script>
+    const SERVER_API_URL = "http://82.115.25.138:8080/api/order";
     const tg = window.Telegram ? window.Telegram.WebApp : null;
     if (tg) {
       try {
@@ -423,7 +424,7 @@
       document.getElementById('cardNum').onclick = copyCard;
       document.getElementById('copyTextHint').onclick = copyCard;
 
-      // پردازش کلیک نهایی و بازگشت به چت ربات
+      // ثبت سفارش و ارسال اعلان به ربات
       document.getElementById('btn-submit-order').onclick = function() {
         const refInput = document.getElementById('refId');
         const refVal = refInput ? refInput.value.trim() : '';
@@ -433,26 +434,30 @@
           return;
         }
 
-        const planName = selectedOrder.plan || "یکماهه ۲۰ گیگابایت";
-        const planPrice = selectedOrder.price || "۲۶۴,۰۰۰";
+        const btn = this;
+        btn.innerText = '⏳ در حال ثبت...';
+        btn.disabled = true;
 
-        const textMessage = 
-          `سفارش جدید نت پرو:\n` +
-          `📦 پلن: ${planName}\n` +
-          `💰 مبلغ: ${planPrice} تومان\n` +
-          `🔢 پیگیری: ${refVal}`;
+        const user = (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) ? tg.initDataUnsafe.user : {};
 
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-          navigator.clipboard.writeText(textMessage).catch(() => {});
-        }
+        const payload = {
+          plan: selectedOrder.plan || "یکماهه ۲۰ گیگابایت",
+          price: selectedOrder.price || "۲۶۴,۰۰۰",
+          ref_id: refVal,
+          user_id: user.id || null
+        };
 
-        alert("✅ سفارش شما ثبت شد!\nدر مرحله بعد، لطفاً تصویر فیش واریزی را در چت ارسال فرمایید.");
-
-        if (tg && typeof tg.close === 'function') {
-          tg.close();
-        } else {
-          window.location.href = "https://t.me/netprovpn_bot";
-        }
+        // ارسال داده به وب‌سرویس سرور
+        fetch(SERVER_API_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+          mode: "no-cors"
+        }).finally(() => {
+          if (tg && typeof tg.close === 'function') {
+            tg.close();
+          }
+        });
       };
     });
   </script>
