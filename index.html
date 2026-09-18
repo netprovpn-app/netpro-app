@@ -358,7 +358,7 @@
       <input type="text" id="refId" placeholder="مثال: 987654 یا 1234">
 
       <div class="step-hint">
-        💡 پس از زدن دکمه زیر، سفارش شما ثبت شده و پنجره بسته می‌شود تا تصویر فیش واریزی را در صفحه چت ربات ارسال فرمایید.
+        💡 پس از زدن دکمه زیر، مشخصات سفارش شما ذخیره شده و پنجره بسته می‌شود تا تصویر فیش واریزی را در صفحه چت ربات ارسال فرمایید.
       </div>
     </div>
 
@@ -370,8 +370,10 @@
   <script>
     const tg = window.Telegram ? window.Telegram.WebApp : null;
     if (tg) {
-      tg.ready();
-      tg.expand();
+      try {
+        tg.ready();
+        tg.expand();
+      } catch (e) {}
     }
 
     let selectedOrder = { plan: '', price: '' };
@@ -408,36 +410,48 @@
 
       const copyCard = () => {
         const raw = "6219861817080335";
-        navigator.clipboard.writeText(raw).then(() => {
-          alert("شماره کارت کپی شد: " + raw);
-        }).catch(() => {
-          alert("شماره کارت: " + raw);
-        });
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(raw).then(() => {
+            alert("شماره کارت کپی شد: " + raw);
+          }).catch(() => {
+            prompt("شماره کارت را کپی کنید:", raw);
+          });
+        } else {
+          prompt("شماره کارت را کپی کنید:", raw);
+        }
       };
       document.getElementById('cardNum').onclick = copyCard;
       document.getElementById('copyTextHint').onclick = copyCard;
 
-      // ارسال مستقیم از کانال بومی تلگرام بدون نیاز به درخواست HTTP
+      // پردازش کلیک نهایی و بازگشت به چت ربات
       document.getElementById('btn-submit-order').onclick = function() {
         const refInput = document.getElementById('refId');
         const refVal = refInput ? refInput.value.trim() : '';
 
         if (!refVal) {
-          alert('لطفاً شماره پیگیری یا ۴ رقم آخر کارت را وارد فرمایید.');
+          alert('لطفاً کد پیگیری یا ۴ رقم آخر کارت را وارد فرمایید.');
           return;
         }
 
-        const orderData = {
-          plan: selectedOrder.plan || "یکماهه",
-          price: selectedOrder.price || "۰",
-          ref_id: refVal
-        };
+        const planName = selectedOrder.plan || "یکماهه ۲۰ گیگابایت";
+        const planPrice = selectedOrder.price || "۲۶۴,۰۰۰";
 
-        if (tg && tg.sendData) {
-          // ارسال مستقیم داده به ربات از طریق تلگرام
-          tg.sendData(JSON.stringify(orderData));
+        const textMessage = 
+          `سفارش جدید نت پرو:\n` +
+          `📦 پلن: ${planName}\n` +
+          `💰 مبلغ: ${planPrice} تومان\n` +
+          `🔢 پیگیری: ${refVal}`;
+
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(textMessage).catch(() => {});
+        }
+
+        alert("✅ سفارش شما ثبت شد!\nدر مرحله بعد، لطفاً تصویر فیش واریزی را در چت ارسال فرمایید.");
+
+        if (tg && typeof tg.close === 'function') {
+          tg.close();
         } else {
-          alert("لطفاً مینی‌اپ را از داخل تلگرام باز کنید.");
+          window.location.href = "https://t.me/netprovpn_bot";
         }
       };
     });
