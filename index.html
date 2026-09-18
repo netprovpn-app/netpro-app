@@ -358,7 +358,7 @@
       <input type="text" id="refId" placeholder="مثال: 987654 یا 1234">
 
       <div class="step-hint">
-        💡 پس از زدن دکمه زیر، سفارش شما ثبت شده و مینی‌اپ بسته می‌شود تا تصویر فیش واریزی را در صفحه چت ربات ارسال فرمایید.
+        💡 پس از زدن دکمه زیر، مشخصات سفارش در کادر پیام شما آماده می‌شود؛ کافیست آن را Send کرده و عکس فیش را ارسال فرمایید.
       </div>
     </div>
 
@@ -368,7 +368,6 @@
   </div>
 
   <script>
-    const SERVER_API_URL = "http://82.115.25.138:8080/api/order";
     const tg = window.Telegram ? window.Telegram.WebApp : null;
     if (tg) {
       try {
@@ -424,7 +423,7 @@
       document.getElementById('cardNum').onclick = copyCard;
       document.getElementById('copyTextHint').onclick = copyCard;
 
-      // ثبت سفارش و ارسال اعلان به ربات
+      // هدایت مستقیم و مطمئن به چت با متن سفارش آماده
       document.getElementById('btn-submit-order').onclick = function() {
         const refInput = document.getElementById('refId');
         const refVal = refInput ? refInput.value.trim() : '';
@@ -434,30 +433,27 @@
           return;
         }
 
-        const btn = this;
-        btn.innerText = '⏳ در حال ثبت...';
-        btn.disabled = true;
+        const planName = selectedOrder.plan || "یکماهه ۲۰ گیگابایت";
+        const planPrice = selectedOrder.price || "۲۶۴,۰۰۰";
 
-        const user = (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) ? tg.initDataUnsafe.user : {};
+        const textMessage = 
+          `سفارش_نت_پرو\n` +
+          `📦 پلن: ${planName}\n` +
+          `💰 مبلغ: ${planPrice} تومان\n` +
+          `🔢 پیگیری: ${refVal}`;
 
-        const payload = {
-          plan: selectedOrder.plan || "یکماهه ۲۰ گیگابایت",
-          price: selectedOrder.price || "۲۶۴,۰۰۰",
-          ref_id: refVal,
-          user_id: user.id || null
-        };
+        // ارسال از طریق لینک اشتراک رسمی تلگرام
+        const targetUrl = `https://t.me/share/url?url=${encodeURIComponent(textMessage)}`;
 
-        // ارسال داده به وب‌سرویس سرور
-        fetch(SERVER_API_URL, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-          mode: "no-cors"
-        }).finally(() => {
-          if (tg && typeof tg.close === 'function') {
-            tg.close();
-          }
-        });
+        if (tg && tg.openTelegramLink) {
+          tg.openTelegramLink(targetUrl);
+        } else {
+          window.location.href = targetUrl;
+        }
+
+        if (tg && tg.close) {
+          tg.close();
+        }
       };
     });
   </script>
