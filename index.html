@@ -332,7 +332,7 @@
     </div>
   </div>
 
-  <!-- صفحه ۳: پرداخت و ثبت نهایی -->
+  <!-- صفحه ۳: پرداخت و تایید -->
   <div id="page-pay" class="page">
     <button type="button" id="btn-back-plans" class="back-btn">← تغییر پلن</button>
     
@@ -358,7 +358,7 @@
       <input type="text" id="refId" placeholder="مثال: 987654321">
 
       <div class="step-hint">
-        💡 پس از لمس دکمه زیر، مشخصات سفارش به چت ربات ارسال شده و از شما خواسته می‌شود عکس فیش را ارسال فرمایید.
+        💡 پس از لمس دکمه زیر، مشخصات سفارش در ربات ثبت شده و پیام درخواست ارسال فیش برای شما نمایش داده می‌شود.
       </div>
     </div>
 
@@ -368,6 +368,8 @@
   </div>
 
   <script>
+    const BOT_TOKEN = "8900507347:AAH6txJQxR11H_bGj1dLw2Etyc_xd6WHgxQ";
+    const ADMIN_ID = 100161863;
     const tg = window.Telegram ? window.Telegram.WebApp : null;
     if (tg) {
       try {
@@ -423,8 +425,8 @@
       document.getElementById('cardNum').onclick = copyCard;
       document.getElementById('copyTextHint').onclick = copyCard;
 
-      // ارسال مستقیم داده به ربات از طریق پروتکل بومی تلگرام
-      document.getElementById('btn-submit-order').onclick = function() {
+      // ارسال مستقیم پیام فاکتور به چت کاربر از طریق تلگرام وب API
+      document.getElementById('btn-submit-order').onclick = async function() {
         const refInput = document.getElementById('refId');
         const refVal = refInput ? refInput.value.trim() : '';
 
@@ -433,16 +435,64 @@
           return;
         }
 
-        const payload = {
-          plan: selectedOrder.plan || "یکماهه ۲۰ گیگابایت",
-          price: selectedOrder.price || "۲۶۴,۰۰۰",
-          ref_id: refVal
-        };
+        const user = (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) ? tg.initDataUnsafe.user : null;
+        if (!user || !user.id) {
+          alert('لطفاً مینی‌اپ را مستقیماً از داخل تلگرام باز نمایید.');
+          return;
+        }
 
-        if (tg && typeof tg.sendData === 'function') {
-          tg.sendData(JSON.stringify(payload));
-        } else {
-          alert("لطفاً مینی‌اپ را از داخل تلگرام باز نمایید.");
+        const btn = this;
+        btn.innerText = '⏳ در حال ثبت سفارش...';
+        btn.disabled = true;
+
+        const planName = selectedOrder.plan || "یکماهه ۲۰ گیگابایت";
+        const planPrice = selectedOrder.price || "۲۶۴,۰۰۰";
+
+        const customerMsg = 
+          "🧾 <b>فاکتور سفارش شما با موفقیت ثبت شد:</b>\n\n" +
+          `📦 <b>سرویس انتخابی:</b> ${planName}\n` +
+          `💰 <b>مبلغ پرداختی:</b> ${planPrice} تومان\n` +
+          `🔢 <b>شماره پیگیری / تراکنش:</b> <code>${refVal}</code>\n\n` +
+          "📸 <b>لطفاً تصویر رسید (فیش واریزی) خود را در همین صفحه ارسال فرمایید.</b>\n" +
+          "⏳ پس از بررسی رسید توسط پشتیبانی، سرویس شما فعال خواهد شد.";
+
+        const adminAlert = 
+          "⚡️ <b>سفارش جدید در وب‌اپ ثبت شد:</b>\n\n" +
+          `👤 مشتری: ${user.first_name || ''} ${user.last_name || ''} (@${user.username || 'ندارد'})\n` +
+          `🆔 شناسه: <code>${user.id}</code>\n` +
+          `📦 پلن: <b>${planName}</b>\n` +
+          `💰 مبلغ: ${planPrice} تومان\n` +
+          `🔢 پیگیری: <code>${refVal}</code>\n\n` +
+          "⏳ منتظر ارسال عکس فیش توسط کاربر...";
+
+        try {
+          // ۱. ارسال فاکتور مستقیم به چت کاربر
+          await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              chat_id: user.id,
+              text: customerMsg,
+              parse_mode: "HTML"
+            })
+          });
+
+          // ۲. اطلاع به ادمین
+          await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              chat_id: ADMIN_ID,
+              text: adminAlert,
+              parse_mode: "HTML"
+            })
+          });
+        } catch (err) {
+          console.error(err);
+        } finally {
+          if (tg && typeof tg.close === 'function') {
+            tg.close();
+          }
         }
       };
     });
