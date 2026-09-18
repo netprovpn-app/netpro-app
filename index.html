@@ -358,7 +358,7 @@
       <input type="text" id="refId" placeholder="مثال: 987654321">
 
       <div class="step-hint">
-        💡 پس از زدن دکمه زیر، مشخصات سفارش در ربات ثبت شده و پیام درخواست ارسال فیش برای شما نمایش داده می‌شود.
+        💡 پس از لمس دکمه زیر، مشخصات سفارش به چت ربات ارسال شده و از شما خواسته می‌شود عکس فیش را ارسال فرمایید.
       </div>
     </div>
 
@@ -423,7 +423,7 @@
       document.getElementById('cardNum').onclick = copyCard;
       document.getElementById('copyTextHint').onclick = copyCard;
 
-      // ثبت و ارسال مستقیم از طریق متد بومی تلگرام
+      // ارسال مستقیم داده به ربات از طریق پروتکل بومی تلگرام
       document.getElementById('btn-submit-order').onclick = function() {
         const refInput = document.getElementById('refId');
         const refVal = refInput ? refInput.value.trim() : '';
@@ -439,26 +439,10 @@
           ref_id: refVal
         };
 
-        const dataStr = JSON.stringify(payload);
-
-        // ارسال مستقیم به ربات با پشتیبانی از هر دو متد تلگرام
-        if (tg && tg.sendData) {
-          try {
-            tg.sendData(dataStr);
-            return;
-          } catch (e) {}
-        }
-
-        // اگر داخل وب‌ویو اینلاین بود، با دکمه اصلی تلگرام ارسال کن
-        if (tg && tg.MainButton) {
-          tg.MainButton.text = "ارسال فاکتور به چت ربات";
-          tg.MainButton.show();
-          tg.MainButton.onClick(() => {
-            tg.sendData(dataStr);
-          });
-          alert("✅ مشخصات ثبت شد. لطفاً دکمه آبی رنگ پایین صفحه را برای تایید لمس کنید.");
+        if (tg && typeof tg.sendData === 'function') {
+          tg.sendData(JSON.stringify(payload));
         } else {
-          alert("لطفاً مینی‌اپ را از داخل تلگرام باز کنید.");
+          alert("لطفاً مینی‌اپ را از داخل تلگرام باز نمایید.");
         }
       };
     });
