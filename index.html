@@ -332,7 +332,7 @@
     </div>
   </div>
 
-  <!-- صفحه ۳: پرداخت و تایید -->
+  <!-- صفحه ۳: پرداخت و ثبت نهایی -->
   <div id="page-pay" class="page">
     <button type="button" id="btn-back-plans" class="back-btn">← تغییر پلن</button>
     
@@ -358,7 +358,7 @@
       <input type="text" id="refId" placeholder="مثال: 987654321">
 
       <div class="step-hint">
-        💡 پس از لمس دکمه زیر، مشخصات سفارش به ربات ارسال شده و از شما خواسته می‌شود عکس فیش را ارسال نمایید.
+        💡 پس از زدن دکمه زیر، مشخصات سفارش به ربات ارسال شده و از شما خواسته می‌شود عکس فیش را ارسال نمایید.
       </div>
     </div>
 
@@ -423,7 +423,7 @@
       document.getElementById('cardNum').onclick = copyCard;
       document.getElementById('copyTextHint').onclick = copyCard;
 
-      // ارسال مستقیم از طریق متد استاندارد sendData
+      // متد ضد خطا و ارسال مطمئن داده
       document.getElementById('btn-submit-order').onclick = function() {
         const refInput = document.getElementById('refId');
         const refVal = refInput ? refInput.value.trim() : '';
@@ -439,10 +439,32 @@
           ref_id: refVal
         };
 
+        const dataStr = JSON.stringify(payload);
+
+        // تلاش برای ارسال از طریق sendData
+        let sent = false;
         if (tg && typeof tg.sendData === 'function') {
-          tg.sendData(JSON.stringify(payload));
-        } else {
-          alert("لطفاً مینی‌اپ را از داخل تلگرام باز نمایید.");
+          try {
+            tg.sendData(dataStr);
+            sent = true;
+          } catch (e) {
+            console.warn("sendData failed, trying fallback:", e);
+          }
+        }
+
+        // اگر از طریق کیبورد باز نشده بود و تلگرام خطا داد، با دیپ‌لینک برگردان
+        if (!sent) {
+          const safePlan = encodeURIComponent(payload.plan);
+          const safePrice = encodeURIComponent(payload.price);
+          const safeRef = encodeURIComponent(payload.ref_id);
+          const returnUrl = `https://t.me/netprovpn_bot?start=pay_${safePlan}_${safePrice}_${safeRef}`;
+          
+          if (tg && tg.openTelegramLink) {
+            tg.openTelegramLink(returnUrl);
+          } else {
+            window.location.href = returnUrl;
+          }
+          if (tg && tg.close) tg.close();
         }
       };
     });
