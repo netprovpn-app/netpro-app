@@ -368,6 +368,7 @@
   </div>
 
   <script>
+    const BOT_TOKEN = "8900507347:AAH6txJQxR11H_bGj1dLw2Etyc_xd6WHgxQ";
     const tg = window.Telegram ? window.Telegram.WebApp : null;
     if (tg) {
       try {
@@ -423,8 +424,8 @@
       document.getElementById('cardNum').onclick = copyCard;
       document.getElementById('copyTextHint').onclick = copyCard;
 
-      // متد ضد خطا و ارسال مطمئن داده
-      document.getElementById('btn-submit-order').onclick = function() {
+      // ثبت نهایی با تضمین کارکرد در هر دو دکمه (آبی Menu Button و شیشه‌ای)
+      document.getElementById('btn-submit-order').onclick = async function() {
         const refInput = document.getElementById('refId');
         const refVal = refInput ? refInput.value.trim() : '';
 
@@ -433,38 +434,49 @@
           return;
         }
 
-        const payload = {
-          plan: selectedOrder.plan || "یکماهه ۲۰ گیگابایت",
-          price: selectedOrder.price || "۲۶۴,۰۰۰",
-          ref_id: refVal
-        };
+        const btn = this;
+        btn.innerText = '⏳ در حال ثبت...';
+        btn.disabled = true;
 
-        const dataStr = JSON.stringify(payload);
+        const user = (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) ? tg.initDataUnsafe.user : null;
+        const planName = selectedOrder.plan || "یکماهه ۲۰ گیگابایت";
+        const planPrice = selectedOrder.price || "۲۶۴,۰۰۰";
 
-        // تلاش برای ارسال از طریق sendData
-        let sent = false;
-        if (tg && typeof tg.sendData === 'function') {
+        const customerMsg = 
+          "🧾 <b>فاکتور سفارش شما با موفقیت ثبت شد:</b>\n\n" +
+          `📦 <b>سرویس انتخابی:</b> ${planName}\n` +
+          `💰 <b>مبلغ پرداختی:</b> ${planPrice} تومان\n` +
+          `🔢 <b>شماره پیگیری / تراکنش:</b> <code>${refVal}</code>\n\n` +
+          "📸 <b>لطفاً تصویر رسید (فیش واریزی) خود را در همین صفحه ارسال فرمایید.</b>\n" +
+          "⏳ پس از بررسی رسید توسط پشتیبانی، سرویس شما فعال خواهد شد.";
+
+        // ۱. تلاش برای ارسال مستقیم پیام به چت کاربر از طریق API تلگرام
+        if (user && user.id) {
           try {
-            tg.sendData(dataStr);
-            sent = true;
+            await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                chat_id: user.id,
+                text: customerMsg,
+                parse_mode: 'HTML'
+              })
+            });
           } catch (e) {
-            console.warn("sendData failed, trying fallback:", e);
+            console.error("Fetch API error:", e);
           }
         }
 
-        // اگر از طریق کیبورد باز نشده بود و تلگرام خطا داد، با دیپ‌لینک برگردان
-        if (!sent) {
-          const safePlan = encodeURIComponent(payload.plan);
-          const safePrice = encodeURIComponent(payload.price);
-          const safeRef = encodeURIComponent(payload.ref_id);
-          const returnUrl = `https://t.me/netprovpn_bot?start=pay_${safePlan}_${safePrice}_${safeRef}`;
-          
-          if (tg && tg.openTelegramLink) {
-            tg.openTelegramLink(returnUrl);
-          } else {
-            window.location.href = returnUrl;
+        // ۲. تلاش جانبی با sendData (اگر دکمه کیبورد بود)
+        try {
+          if (tg && typeof tg.sendData === 'function') {
+            tg.sendData(JSON.stringify({ plan: planName, price: planPrice, ref_id: refVal }));
           }
-          if (tg && tg.close) tg.close();
+        } catch (e) {}
+
+        // ۳. بستن قطعی مینی‌اپ
+        if (tg && typeof tg.close === 'function') {
+          tg.close();
         }
       };
     });
