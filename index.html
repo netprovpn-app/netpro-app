@@ -344,7 +344,7 @@
     </div>
   </div>
 
-  <!-- صفحه ۳: پرداخت و آپلود رسید -->
+  <!-- صفحه ۳: پرداخت و آپلود فیش -->
   <div id="page-pay" class="page">
     <button type="button" id="btn-back-plans" class="back-btn">← تغییر پلن</button>
     
@@ -369,7 +369,7 @@
       </label>
       <input type="text" id="refId" placeholder="مثال: 987654 یا 1234">
 
-      <label class="upload-btn-label" for="receiptFile">
+      <label class="upload-btn-label" for="receiptFile" id="uploadLabel">
         📷 انتخاب تصویر فیش واریزی
       </label>
       <input type="file" id="receiptFile" accept="image/*" style="display: none;">
@@ -433,17 +433,44 @@
       document.getElementById('cardNum').onclick = copyCard;
       document.getElementById('copyTextHint').onclick = copyCard;
 
-      // خواندن فایل عکس و تبدیل به بیس۶۴ برای ارسال
+      // خواندن، ریسایز و فشرده‌سازی خودکار تصویر فیش قبل از آپلود
       document.getElementById('receiptFile').onchange = function(e) {
         const file = e.target.files[0];
         if (!file) return;
 
+        const uploadLabel = document.getElementById('uploadLabel');
+        uploadLabel.innerText = '⏳ در حال بهینه‌سازی تصویر...';
+
         const reader = new FileReader();
         reader.onload = function(evt) {
-          receiptBase64 = evt.target.result;
-          const preview = document.getElementById('preview-img');
-          preview.src = receiptBase64;
-          preview.style.display = 'block';
+          const img = new Image();
+          img.onload = function() {
+            const canvas = document.createElement('canvas');
+            let width = img.width;
+            let height = img.height;
+            const maxDim = 1200;
+
+            if (width > height && width > maxDim) {
+              height = Math.round((height * maxDim) / width);
+              width = maxDim;
+            } else if (height > maxDim) {
+              width = Math.round((width * maxDim) / height);
+              height = maxDim;
+            }
+
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, width, height);
+
+            // خروجی استاندارد فشرده شده
+            receiptBase64 = canvas.toDataURL('image/jpeg', 0.7);
+            const preview = document.getElementById('preview-img');
+            preview.src = receiptBase64;
+            preview.style.display = 'block';
+            uploadLabel.innerText = '✅ تصویر فیش آماده ارسال است';
+          };
+          img.src = evt.target.result;
         };
         reader.readAsDataURL(file);
       };
@@ -459,12 +486,12 @@
         }
 
         if (!receiptBase64) {
-          alert('لطفاً عکس فیش واریزی را انتخاب فرمایید.');
+          alert('لطفاً تصویر فیش واریزی را انتخاب فرمایید.');
           return;
         }
 
         const btn = this;
-        btn.innerText = '⏳ در حال ارسال سفارش و فیش...';
+        btn.innerText = '⏳ در حال ارسال سفارش...';
         btn.disabled = true;
 
         const user = (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) ? tg.initDataUnsafe.user : {};
@@ -493,8 +520,7 @@
             throw new Error("Err");
           }
         } catch (err) {
-          alert("خطا در ارسال تصویر فیش. لطفاً تصویر را مستقیماً در چت ربات ارسال فرمایید.");
-          if (tg) tg.close();
+          alert("خطا در ارتباط با سرور. لطفاً مجدداً تلاش کنید.");
         } finally {
           btn.innerText = '✅ تکمیل خرید و ارسال فیش';
           btn.disabled = false;
