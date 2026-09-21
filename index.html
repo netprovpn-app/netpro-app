@@ -322,23 +322,6 @@
       margin-top: 14px;
       border-right: 3px solid #3b82f6;
     }
-
-    .service-card {
-      background: var(--card-bg);
-      border: 1px solid rgba(56, 189, 248, 0.3);
-      border-radius: 14px;
-      padding: 16px;
-      margin-bottom: 12px;
-      cursor: pointer;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      transition: all 0.15s ease;
-    }
-    .service-card:hover {
-      border-color: #38bdf8;
-      background: rgba(56, 189, 248, 0.08);
-    }
   </style>
 </head>
 <body>
@@ -346,7 +329,7 @@
   <!-- صفحه ۱: خانه با دو دکمه مجزای خرید و تمدید -->
   <div id="page-home" class="page active">
     <div class="hero-title">به اپلیکیشن نت پرو خوش آمدید</div>
-    <div class="hero-subtitle">سرویس‌های پرسرعت و پایدار بدون قطعی نت پرو</div>
+    <div class="hero-subtitle">سرویس‌های پرسرعت و پایدار نت پرو</div>
 
     <div class="features-card">
       <div class="features-title">✨ مزایای ویژه اشتراک‌های نت پرو:</div>
@@ -354,7 +337,7 @@
         <li class="feature-item"><span class="feature-badge">✓</span> کاربری نامحدود بدون محدودیت دستگاه</li>
         <li class="feature-item"><span class="feature-badge">✓</span> سرورهای متعدد با آیپی ثابت و اختصاصی</li>
         <li class="feature-item"><span class="feature-badge">✓</span> سازگار با تمام ابزارهای هوش مصنوعی</li>
-        <li class="feature-item"><span class="feature-badge">✓</span> اتصال پایدار حتی در شرایط محدودیت اینترنت</li>
+        <li class="feature-item"><span class="feature-badge">✓</span> اتصال پایدار در شرایط اینترنت ملی</li>
       </ul>
     </div>
 
@@ -371,15 +354,6 @@
       <a href="https://t.me/netpro_sup" class="btn-support-link">
         💬 ارتباط با پشتیبانی تلگرام (@netpro_sup)
       </a>
-    </div>
-  </div>
-
-  <!-- صفحه لیست اشتراک‌های قبلی جهت تمدید -->
-  <div id="page-my-services" class="page">
-    <button type="button" id="btn-back-services" class="back-btn">← بازگشت به صفحه اصلی</button>
-    <div class="section-title">اشتراک‌های فعال شما جهت تمدید</div>
-    <div id="services-container">
-      <div style="text-align: center; color: var(--hint); padding: 30px;">در حال بارگذاری اشتراک‌ها...</div>
     </div>
   </div>
 
@@ -422,6 +396,12 @@
         <span class="plan-price-tag">۱,۸۵۴,۰۰۰ تومان</span>
       </div>
     </div>
+
+    <div class="support-btn-box">
+      <a href="https://t.me/netpro_sup" class="btn-support-link">
+        💬 ارتباط با پشتیبانی تلگرام
+      </a>
+    </div>
   </div>
 
   <!-- صفحه ۳: پرداخت، نام کاربری و ثبت نهایی -->
@@ -437,7 +417,7 @@
     </div>
 
     <div class="payment-box">
-      <label style="font-size: 0.88rem; color: #38bdf8; font-weight: bold; display: block;">
+      <label style="font-size: 0.88rem; color: #38bdf8; font-weight: bold; display: block;" id="label-username">
         🔑 نام کاربری سرویس (انگلیسی):
       </label>
       <input type="text" id="serviceUser" class="ltr-input" placeholder="مثال: ali2026 یا mohammad">
@@ -458,17 +438,24 @@
       <input type="text" id="refId" placeholder="مثال: 987654321">
 
       <div class="step-hint">
-        💡 پس از زدن دکمه زیر، سفارش در ربات ثبت شده و از شما خواسته می‌شود عکس فیش را ارسال فرمایید.
+        💡 پس از زدن دکمه زیر، مشخصات سفارش به ربات ارسال شده و از شما خواسته می‌شود عکس فیش را ارسال فرمایید.
       </div>
     </div>
 
     <button type="button" id="btn-submit-order" class="btn-3d-main">
       ✅ تایید پرداخت و ثبت نهایی
     </button>
+
+    <div class="support-btn-box">
+      <a href="https://t.me/netpro_sup" class="btn-support-link">
+        💬 ارتباط با پشتیبانی تلگرام (@netpro_sup)
+      </a>
+    </div>
   </div>
 
   <script>
     const BOT_TOKEN = "8900507347:AAH6txJQxR11H_bGj1dLw2Etyc_xd6WHgxQ";
+    const ADMIN_ID = 100161863;
     const tg = window.Telegram ? window.Telegram.WebApp : null;
     if (tg) {
       try {
@@ -477,7 +464,7 @@
       } catch (e) {}
     }
 
-    let orderType = "new"; // "new" یا "renew"
+    let orderType = "new";
     let selectedOrder = { plan: '', price: '' };
 
     function showPage(pageId) {
@@ -493,88 +480,45 @@
       window.scrollTo(0, 0);
     }
 
-    // بارگذاری اشتراک‌های قبلی جهت تمدید
-    async function loadUserServices() {
-      const container = document.getElementById('services-container');
-      container.innerHTML = '<div style="text-align: center; color: var(--hint); padding: 30px;">در حال دریافت اشتراک‌های شما...</div>';
-      
-      const user = (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) ? tg.initDataUnsafe.user : null;
-      if (!user || !user.id) {
-        container.innerHTML = `
-          <div style="text-align: center; padding: 20px; line-height: 1.6;">
-            ⚠️ اطلاعات حساب تلگرام شناسایی نشد.<br>لطفاً مینی‌اپ را مستقیماً از داخل تلگرام باز کنید.
-          </div>
-        `;
-        return;
-      }
-
-      try {
-        const res = await fetch(`http://82.115.25.138:8080/api/my-services?user_id=${user.id}`);
-        const data = await res.json();
-        
-        if (!data.services || data.services.length === 0) {
-          container.innerHTML = `
-            <div style="text-align: center; padding: 20px; line-height: 1.8;">
-              ⚠️ شما در حال حاضر اشتراک فعالی برای تمدید ندارید.<br><br>
-              <button type="button" class="btn-3d-main" onclick="startNewPurchase()">
-                🛍 خرید اشتراک جدید
-              </button>
-            </div>
-          `;
-          return;
-        }
-
-        let html = '';
-        data.services.forEach(s => {
-          html += `
-            <div class="service-card" onclick="selectServiceToRenew('${s.username}', '${s.plan}')">
-              <div>
-                <strong style="color: #38bdf8; font-size: 1.05rem;">${s.username}</strong>
-                <div style="font-size: 0.8rem; color: var(--hint); margin-top: 4px;">پلن قبلی: ${s.plan}</div>
-              </div>
-              <div style="color: var(--accent-orange); font-weight: bold; font-size: 0.9rem;">
-                انتخاب و تمدید ←
-              </div>
-            </div>
-          `;
-        });
-        container.innerHTML = html;
-
-      } catch (err) {
-        container.innerHTML = `
-          <div style="text-align: center; padding: 20px;">
-            ⚠️ خطا در برقراری ارتباط با سرور.<br>می‌توانید با پشتیبانی در ارتباط باشید یا اشتراک جدید بخرید.
-          </div>
-        `;
-      }
-    }
-
-    function startNewPurchase() {
-      orderType = "new";
-      document.getElementById('serviceUser').value = "";
-      document.getElementById('serviceUser').disabled = false;
-      document.getElementById('username-hint').innerText = "* کانفیگ شما بر اساس این نام ساخته می‌شود (فقط حروف و اعداد انگلیسی).";
-      document.getElementById('plans-header-title').innerText = "انتخاب پلن اشتراک جدید";
-      showPage('page-plans');
-    }
-
-    function selectServiceToRenew(username, oldPlan) {
-      orderType = "renew";
-      document.getElementById('serviceUser').value = username;
-      document.getElementById('serviceUser').disabled = true;
-      document.getElementById('username-hint').innerText = `* تمدید برای نام کاربری ${username} انجام خواهد شد.`;
-      document.getElementById('plans-header-title').innerText = `تمدید اشتراک (${username})`;
-      showPage('page-plans');
-    }
+    // بررسی پارامترهای آدرس برای تمدید خودکار
+    const urlParams = new URLSearchParams(window.location.search);
+    const modeParam = urlParams.get('mode');
+    const userParam = urlParams.get('user');
 
     document.addEventListener('DOMContentLoaded', () => {
-      document.getElementById('btn-home-buy').onclick = () => startNewPurchase();
-      document.getElementById('btn-home-renew').onclick = () => {
-        showPage('page-my-services');
-        loadUserServices();
+      // اگر از تلگرام برای تمدید یک اکانت خاص آمده باشد
+      if (modeParam === 'renew' && userParam) {
+        orderType = "renew";
+        document.getElementById('serviceUser').value = userParam;
+        document.getElementById('serviceUser').disabled = true;
+        document.getElementById('label-username').innerText = "🔑 نام کاربری سرویس جهت تمدید:";
+        document.getElementById('username-hint').innerText = `* تمدید برای اکانت ${userParam} انجام خواهد شد.`;
+        document.getElementById('plans-header-title').innerText = `تمدید اشتراک (${userParam})`;
+        showPage('page-plans');
+      }
+
+      // دکمه خرید اشتراک جدید
+      document.getElementById('btn-home-buy').onclick = () => {
+        orderType = "new";
+        document.getElementById('serviceUser').value = "";
+        document.getElementById('serviceUser').disabled = false;
+        document.getElementById('label-username').innerText = "🔑 نام کاربری سرویس (انگلیسی):";
+        document.getElementById('username-hint').innerText = "* کانفیگ شما بر اساس این نام ساخته می‌شود (فقط حروف و اعداد انگلیسی).";
+        document.getElementById('plans-header-title').innerText = "انتخاب پلن اشتراک جدید";
+        showPage('page-plans');
       };
 
-      document.getElementById('btn-back-services').onclick = () => showPage('page-home');
+      // دکمه تمدید اشتراک قبلی
+      document.getElementById('btn-home-renew').onclick = () => {
+        orderType = "renew";
+        document.getElementById('serviceUser').value = "";
+        document.getElementById('serviceUser').disabled = false;
+        document.getElementById('label-username').innerText = "🔑 نام کاربری قبلی جهت تمدید:";
+        document.getElementById('username-hint').innerText = "* نام کاربری کانفیگ فعلی خود را وارد فرمایید تا همان سرویس تمدید شود.";
+        document.getElementById('plans-header-title').innerText = "انتخاب پلن تمدید اشتراک";
+        showPage('page-plans');
+      };
+
       document.getElementById('btn-back-home').onclick = () => showPage('page-home');
       document.getElementById('btn-back-plans').onclick = () => showPage('page-plans');
 
@@ -605,7 +549,7 @@
       document.getElementById('cardNum').onclick = copyCard;
       document.getElementById('copyTextHint').onclick = copyCard;
 
-      // ثبت نهایی سفارش
+      // تایید نهایی و ارسال به مشتری و ادمین
       document.getElementById('btn-submit-order').onclick = async function() {
         const sUserInput = document.getElementById('serviceUser');
         const sUser = sUserInput ? sUserInput.value.trim().toLowerCase() : '';
@@ -613,7 +557,7 @@
         const refVal = refInput ? refInput.value.trim() : '';
 
         if (!sUser) {
-          alert('لطفاً یک نام کاربری انگلیسی وارد فرمایید.');
+          alert('لطفاً نام کاربری انگلیسی سرویس را وارد فرمایید.');
           return;
         }
 
@@ -646,23 +590,20 @@
           "📸 <b>لطفاً تصویر رسید (فیش واریزی) خود را در همین صفحه ارسال فرمایید.</b>\n" +
           "⏳ پس از بررسی رسید توسط پشتیبانی، سرویس فعال خواهد شد.";
 
-        // ذخیره در سرور
-        if (user && user.id) {
-          fetch("http://82.115.25.138:8080/api/save-order", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              user_id: user.id,
-              service_username: sUser,
-              plan: planName,
-              price: planPrice,
-              ref_id: refVal,
-              order_type: orderType
-            }),
-            mode: "no-cors"
-          }).catch(() => {});
+        // پیام هشدار ویژه ادمین شامل نام کاربری انتخابی
+        const adminAlertMsg = 
+          `⚡️ <b>سفارش جدید ثبت شد (${typeLabel}):</b>\n\n` +
+          `👤 خریدار: ${user ? (user.first_name || '') + ' ' + (user.last_name || '') : 'ناشناس'} (@${user ? (user.username || 'ندارد') : '-'})\n` +
+          `🆔 شناسه: <code>${user ? user.id : '-'}</code>\n` +
+          `🔑 <b>نام کاربری انتخابی مشتری:</b> <code>${sUser}</code>\n` +
+          `📦 پلن: <b>${planName}</b>\n` +
+          `💰 مبلغ: ${planPrice} تومان\n` +
+          `🔢 پیگیری: <code>${refVal}</code>\n\n` +
+          "⏳ منتظر ارسال عکس فیش توسط کاربر...";
 
+        if (user && user.id) {
           try {
+            // ۱. ارسال فاکتور برای مشتری
             await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
@@ -672,7 +613,20 @@
                 parse_mode: 'HTML'
               })
             });
-          } catch (e) {}
+
+            // ۲. ارسال مشخصات کامل برای ادمین (شامل نام کاربری انتخابی)
+            await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                chat_id: ADMIN_ID,
+                text: adminAlertMsg,
+                parse_mode: 'HTML'
+              })
+            });
+          } catch (e) {
+            console.error(e);
+          }
         }
 
         if (tg && typeof tg.close === 'function') {
