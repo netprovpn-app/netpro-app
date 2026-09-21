@@ -70,7 +70,7 @@
       border-radius: 16px;
       padding: 18px;
       border: 1px solid rgba(255, 255, 255, 0.08);
-      margin-bottom: 26px;
+      margin-bottom: 24px;
       box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
     }
 
@@ -115,7 +115,7 @@
     .btn-3d-main {
       width: 100%;
       max-width: 320px;
-      margin: 0 auto;
+      margin: 0 auto 12px auto;
       display: block;
       padding: 16px;
       background: linear-gradient(180deg, #3b82f6 0%, #2563eb 100%);
@@ -127,14 +127,36 @@
       cursor: pointer;
       box-shadow: 0 6px 0 var(--primary-shadow), 0 10px 18px rgba(37, 99, 235, 0.35);
       transition: all 0.1s ease;
-      position: relative;
-      top: 0;
       text-align: center;
+      text-decoration: none;
     }
 
     .btn-3d-main:active {
-      top: 4px;
+      transform: translateY(4px);
       box-shadow: 0 2px 0 var(--primary-shadow), 0 4px 8px rgba(37, 99, 235, 0.2);
+    }
+
+    /* دکمه ارتباط با پشتیبانی در صفحات مینی‌اپ */
+    .support-btn-box {
+      width: 100%;
+      max-width: 320px;
+      margin: 8px auto 20px auto;
+      text-align: center;
+    }
+    .btn-support-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      padding: 13px;
+      background: rgba(56, 189, 248, 0.12);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      color: #38bdf8;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 0.92rem;
+      text-decoration: none;
     }
 
     .section-title {
@@ -162,14 +184,12 @@
       border-radius: 14px;
       color: var(--text);
       cursor: pointer;
-      position: relative;
-      top: 0;
       box-shadow: 0 4px 0 rgba(0, 0, 0, 0.4);
       transition: all 0.1s ease;
     }
 
     .plan-btn-3d:active {
-      top: 3px;
+      transform: translateY(3px);
       box-shadow: 0 1px 0 rgba(0, 0, 0, 0.4);
     }
 
@@ -255,6 +275,13 @@
       outline: none;
     }
 
+    .ltr-input {
+      direction: ltr;
+      text-align: left;
+      font-family: monospace;
+      font-size: 1.05rem !important;
+    }
+
     .step-hint {
       background: rgba(59, 130, 246, 0.1);
       border-radius: 10px;
@@ -287,8 +314,14 @@
     </div>
 
     <button type="button" id="btn-go-plans" class="btn-3d-main">
-      🛍 خرید اشتراک
+      🛍 خرید یا تمدید اشتراک
     </button>
+
+    <div class="support-btn-box">
+      <a href="https://t.me/netpro_sup" class="btn-support-link">
+        💬 ارتباط با پشتیبانی تلگرام (@netpro_sup)
+      </a>
+    </div>
   </div>
 
   <!-- صفحه ۲: تعرفه‌ها -->
@@ -330,9 +363,15 @@
         <span class="plan-price-tag">۱,۸۵۴,۰۰۰ تومان</span>
       </div>
     </div>
+
+    <div class="support-btn-box">
+      <a href="https://t.me/netpro_sup" class="btn-support-link">
+        💬 ارتباط با پشتیبانی تلگرام
+      </a>
+    </div>
   </div>
 
-  <!-- صفحه ۳: پرداخت و ثبت نهایی -->
+  <!-- صفحه ۳: پرداخت، نام کاربری و ثبت نهایی -->
   <div id="page-pay" class="page">
     <button type="button" id="btn-back-plans" class="back-btn">← تغییر پلن</button>
     
@@ -345,6 +384,15 @@
     </div>
 
     <div class="payment-box">
+      <!-- انتخاب نام کاربری اختصاصی برای ساخت کانفیگ -->
+      <label style="font-size: 0.88rem; color: #38bdf8; font-weight: bold; display: block;">
+        🔑 نام کاربری سرویس (انگلیسی):
+      </label>
+      <input type="text" id="serviceUser" class="ltr-input" placeholder="مثال: ali2026 یا sara_vpn">
+      <div style="font-size: 0.75rem; color: var(--hint); margin-top: 4px; margin-bottom: 14px;">
+        * کانفیگ شما بر اساس این نام ساخته می‌شود (فقط حروف و اعداد انگلیسی).
+      </div>
+
       <div style="font-size: 0.85rem; color: var(--hint);">شماره کارت جهت واریز مبلغ:</div>
       <div class="card-display" id="cardNum">6219 8618 1708 0335</div>
       <div class="copy-hint" id="copyTextHint">📋 لمس کنید تا شماره کارت کپی شود</div>
@@ -365,6 +413,12 @@
     <button type="button" id="btn-submit-order" class="btn-3d-main">
       ✅ تایید پرداخت و ثبت نهایی
     </button>
+
+    <div class="support-btn-box">
+      <a href="https://t.me/netpro_sup" class="btn-support-link">
+        💬 ارتباط با پشتیبانی تلگرام (@netpro_sup)
+      </a>
+    </div>
   </div>
 
   <script>
@@ -378,6 +432,10 @@
     }
 
     let selectedOrder = { plan: '', price: '' };
+
+    // بررسی اینکه آیا از دکمه تمدید با پارامتر renew آمده است یا خیر
+    const urlParams = new URLSearchParams(window.location.search);
+    const renewUser = urlParams.get('renew');
 
     function showPage(pageId) {
       document.querySelectorAll('.page').forEach(p => {
@@ -393,6 +451,11 @@
     }
 
     document.addEventListener('DOMContentLoaded', () => {
+      if (renewUser) {
+        document.getElementById('serviceUser').value = renewUser;
+        document.getElementById('serviceUser').disabled = true;
+      }
+
       document.getElementById('btn-go-plans').onclick = () => showPage('page-plans');
       document.getElementById('btn-back-home').onclick = () => showPage('page-home');
       document.getElementById('btn-back-plans').onclick = () => showPage('page-plans');
@@ -424,10 +487,24 @@
       document.getElementById('cardNum').onclick = copyCard;
       document.getElementById('copyTextHint').onclick = copyCard;
 
-      // ثبت نهایی با تضمین کارکرد در هر دو دکمه (آبی Menu Button و شیشه‌ای)
+      // ثبت نهایی سفارش
       document.getElementById('btn-submit-order').onclick = async function() {
+        const sUserInput = document.getElementById('serviceUser');
+        const sUser = sUserInput ? sUserInput.value.trim().toLowerCase() : '';
         const refInput = document.getElementById('refId');
         const refVal = refInput ? refInput.value.trim() : '';
+
+        if (!sUser) {
+          alert('لطفاً یک نام کاربری انگلیسی برای سرویس خود وارد فرمایید.');
+          return;
+        }
+
+        // بررسی اینکه فقط حروف و ارقام انگلیسی باشد
+        const validUserRegex = /^[a-zA-Z0-9_\-\.]+$/;
+        if (!validUserRegex.test(sUser)) {
+          alert('نام کاربری فقط باید شامل حروف و اعداد انگلیسی باشد (بدون فاصله یا حروف فارسی).');
+          return;
+        }
 
         if (!refVal) {
           alert('لطفاً شماره تراکنش یا کد پیگیری را وارد فرمایید.');
@@ -444,13 +521,13 @@
 
         const customerMsg = 
           "🧾 <b>فاکتور سفارش شما با موفقیت ثبت شد:</b>\n\n" +
+          `🔑 <b>نام کاربری انتخابی:</b> <code>${sUser}</code>\n` +
           `📦 <b>سرویس انتخابی:</b> ${planName}\n` +
           `💰 <b>مبلغ پرداختی:</b> ${planPrice} تومان\n` +
           `🔢 <b>شماره پیگیری / تراکنش:</b> <code>${refVal}</code>\n\n` +
           "📸 <b>لطفاً تصویر رسید (فیش واریزی) خود را در همین صفحه ارسال فرمایید.</b>\n" +
-          "⏳ پس از بررسی رسید توسط پشتیبانی، سرویس شما فعال خواهد شد.";
+          "⏳ پس از بررسی رسید توسط پشتیبانی، کانفیگ تحویل داده خواهد شد.";
 
-        // ۱. تلاش برای ارسال مستقیم پیام به چت کاربر از طریق API تلگرام
         if (user && user.id) {
           try {
             await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
@@ -463,18 +540,10 @@
               })
             });
           } catch (e) {
-            console.error("Fetch API error:", e);
+            console.error(e);
           }
         }
 
-        // ۲. تلاش جانبی با sendData (اگر دکمه کیبورد بود)
-        try {
-          if (tg && typeof tg.sendData === 'function') {
-            tg.sendData(JSON.stringify({ plan: planName, price: planPrice, ref_id: refVal }));
-          }
-        } catch (e) {}
-
-        // ۳. بستن قطعی مینی‌اپ
         if (tg && typeof tg.close === 'function') {
           tg.close();
         }
