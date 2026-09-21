@@ -5,28 +5,35 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>اپلیکیشن نت پرو</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <!-- فونت استاندارد و زیبای فارسی Vazirmatn / Yekan -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  
   <style>
     :root {
-      --bg: #0f172a;
+      --bg-dark: #090d16;
+      --card-bg: rgba(22, 30, 49, 0.75);
+      --card-border: rgba(56, 189, 248, 0.2);
       --text: #f8fafc;
-      --card-bg: #1e293b;
-      --primary: #3b82f6;
-      --primary-shadow: #1e40af;
-      --accent-green: #22c55e;
-      --accent-orange: #f59e0b;
-      --orange-shadow: #b45309;
       --hint: #94a3b8;
+      --blue-main: #3b82f6;
+      --blue-dark: #1d4ed8;
+      --orange-main: #f59e0b;
+      --orange-dark: #b45309;
+      --green-accent: #10b981;
+      --cyan-accent: #38bdf8;
     }
 
     * {
       box-sizing: border-box;
       user-select: none;
       -webkit-tap-highlight-color: transparent;
+      font-family: 'Vazirmatn', -apple-system, BlinkMacSystemFont, sans-serif;
     }
 
     body {
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background-color: var(--bg);
+      background: radial-gradient(circle at top, #111c35 0%, var(--bg-dark) 100%);
       color: var(--text);
       margin: 0;
       padding: 16px;
@@ -38,139 +45,182 @@
 
     .page {
       display: none;
-      animation: fadeIn 0.2s ease-in-out;
+      animation: fadeIn 0.25s ease-out;
     }
     .page.active {
       display: block !important;
     }
 
     @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(4px); }
+      from { opacity: 0; transform: translateY(6px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
+    /* هدر و عناوین */
     .hero-title {
-      font-size: 1.5rem;
-      font-weight: 800;
+      font-size: 1.55rem;
+      font-weight: 900;
       text-align: center;
       margin-top: 10px;
-      margin-bottom: 6px;
-      color: #60a5fa;
+      margin-bottom: 8px;
+      background: linear-gradient(135deg, #60a5fa, #38bdf8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: -0.5px;
     }
 
     .hero-subtitle {
-      font-size: 0.96rem;
-      font-weight: 600;
+      font-size: 0.95rem;
+      font-weight: 500;
       text-align: center;
-      margin-bottom: 20px;
-      color: var(--text);
-      opacity: 0.9;
+      margin-bottom: 22px;
+      color: var(--hint);
+      line-height: 1.6;
     }
 
+    /* کارت ویژگی‌ها (Glassmorphism) */
     .features-card {
       background: var(--card-bg);
-      border-radius: 16px;
-      padding: 18px;
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      margin-bottom: 22px;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-radius: 20px;
+      padding: 20px;
+      border: 1px solid var(--card-border);
+      margin-bottom: 24px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
     }
 
     .features-title {
-      font-weight: 700;
-      font-size: 0.95rem;
-      margin-bottom: 12px;
-      color: #38bdf8;
+      font-weight: 800;
+      font-size: 0.96rem;
+      margin-bottom: 14px;
+      color: var(--cyan-accent);
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
 
     .feature-list {
       list-style: none;
       padding: 0;
       margin: 0;
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
     }
 
     .feature-item {
       display: flex;
       align-items: center;
-      gap: 8px;
-      font-size: 0.86rem;
-      line-height: 1.5;
-      color: var(--text);
+      gap: 10px;
+      font-size: 0.88rem;
+      color: #e2e8f0;
+      line-height: 1.4;
     }
 
     .feature-badge {
       background: rgba(56, 189, 248, 0.15);
-      color: #38bdf8;
-      width: 22px;
-      height: 22px;
+      color: var(--cyan-accent);
+      width: 24px;
+      height: 24px;
       display: inline-flex;
       align-items: center;
       justify-content: center;
       border-radius: 50%;
-      font-size: 0.75rem;
+      font-size: 0.8rem;
+      font-weight: bold;
       flex-shrink: 0;
+      box-shadow: 0 0 10px rgba(56, 189, 248, 0.2);
     }
 
+    /* دکمه‌های ۳ بعدی شیک و گرافیکی */
     .main-actions {
       display: flex;
       flex-direction: column;
-      gap: 12px;
-      max-width: 320px;
-      margin: 0 auto 16px auto;
+      gap: 14px;
+      max-width: 330px;
+      margin: 0 auto 20px auto;
       width: 100%;
     }
 
-    .btn-3d-main {
+    .btn-3d-blue {
       width: 100%;
-      display: block;
       padding: 16px;
       background: linear-gradient(180deg, #3b82f6 0%, #2563eb 100%);
       color: #ffffff;
       border: none;
-      border-radius: 14px;
+      border-radius: 16px;
       font-size: 1.05rem;
-      font-weight: 700;
+      font-weight: 800;
       cursor: pointer;
-      box-shadow: 0 6px 0 var(--primary-shadow), 0 10px 18px rgba(37, 99, 235, 0.35);
-      transition: all 0.1s ease;
-      text-align: center;
-      text-decoration: none;
+      box-shadow: 0 6px 0 var(--blue-dark), 0 12px 24px rgba(37, 99, 235, 0.4);
+      transition: all 0.12s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
     }
 
-    .btn-3d-main:active {
+    .btn-3d-blue:active {
       transform: translateY(4px);
-      box-shadow: 0 2px 0 var(--primary-shadow), 0 4px 8px rgba(37, 99, 235, 0.2);
+      box-shadow: 0 2px 0 var(--blue-dark), 0 6px 12px rgba(37, 99, 235, 0.25);
     }
 
-    .btn-3d-renew {
+    .btn-3d-orange {
       width: 100%;
-      display: block;
       padding: 16px;
       background: linear-gradient(180deg, #f59e0b 0%, #d97706 100%);
       color: #ffffff;
       border: none;
-      border-radius: 14px;
+      border-radius: 16px;
       font-size: 1.05rem;
-      font-weight: 700;
+      font-weight: 800;
       cursor: pointer;
-      box-shadow: 0 6px 0 var(--orange-shadow), 0 10px 18px rgba(245, 158, 11, 0.35);
-      transition: all 0.1s ease;
-      text-align: center;
-      text-decoration: none;
+      box-shadow: 0 6px 0 var(--orange-dark), 0 12px 24px rgba(245, 158, 11, 0.4);
+      transition: all 0.12s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
     }
 
-    .btn-3d-renew:active {
+    .btn-3d-orange:active {
       transform: translateY(4px);
-      box-shadow: 0 2px 0 var(--orange-shadow), 0 4px 8px rgba(245, 158, 11, 0.2);
+      box-shadow: 0 2px 0 var(--orange-dark), 0 6px 12px rgba(245, 158, 11, 0.25);
     }
 
+    /* نوار ناوبری و دکمه بازگشت */
+    .top-bar-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .nav-btn {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--hint);
+      border-radius: 10px;
+      padding: 6px 12px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+    }
+    .nav-btn:hover {
+      color: #ffffff;
+      border-color: rgba(255, 255, 255, 0.3);
+    }
+
+    /* دکمه ارتباط با پشتیبانی */
     .support-btn-box {
       width: 100%;
-      max-width: 320px;
-      margin: 8px auto 20px auto;
+      max-width: 330px;
+      margin: 10px auto 24px auto;
       text-align: center;
     }
     .btn-support-link {
@@ -180,22 +230,29 @@
       gap: 8px;
       width: 100%;
       padding: 13px;
-      background: rgba(56, 189, 248, 0.12);
-      border: 1px solid rgba(56, 189, 248, 0.35);
-      color: #38bdf8;
-      border-radius: 12px;
+      background: rgba(56, 189, 248, 0.08);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      color: var(--cyan-accent);
+      border-radius: 14px;
       font-weight: 700;
       font-size: 0.92rem;
       text-decoration: none;
+      box-shadow: 0 4px 15px rgba(56, 189, 248, 0.08);
+      transition: all 0.15s ease;
+    }
+    .btn-support-link:hover {
+      background: rgba(56, 189, 248, 0.15);
     }
 
     .section-title {
-      font-size: 1.2rem;
-      font-weight: 700;
+      font-size: 1.25rem;
+      font-weight: 800;
       text-align: center;
-      margin-bottom: 20px;
+      margin-bottom: 18px;
+      color: #ffffff;
     }
 
+    /* گرید کارت‌های پلن */
     .plans-grid {
       display: flex;
       flex-direction: column;
@@ -203,120 +260,128 @@
       margin-bottom: 24px;
     }
 
-    .plan-btn-3d {
+    .plan-card {
       width: 100%;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 15px 18px;
+      padding: 16px 18px;
       background: var(--card-bg);
+      backdrop-filter: blur(8px);
       border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 14px;
+      border-radius: 16px;
       color: var(--text);
       cursor: pointer;
-      box-shadow: 0 4px 0 rgba(0, 0, 0, 0.4);
-      transition: all 0.1s ease;
+      box-shadow: 0 5px 0 rgba(0, 0, 0, 0.4);
+      transition: all 0.12s ease;
     }
 
-    .plan-btn-3d:active {
+    .plan-card:active {
       transform: translateY(3px);
-      box-shadow: 0 1px 0 rgba(0, 0, 0, 0.4);
+      box-shadow: 0 2px 0 rgba(0, 0, 0, 0.4);
     }
 
     .plan-name {
-      font-size: 0.95rem;
+      font-size: 0.96rem;
       font-weight: 700;
     }
 
     .plan-price-tag {
-      background: rgba(34, 197, 94, 0.15);
-      color: var(--accent-green);
-      padding: 6px 12px;
-      border-radius: 8px;
-      font-weight: 700;
-      font-size: 0.9rem;
-      border: 1px solid rgba(34, 197, 94, 0.3);
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--green-accent);
+      padding: 6px 14px;
+      border-radius: 10px;
+      font-weight: 800;
+      font-size: 0.92rem;
+      border: 1px solid rgba(16, 185, 129, 0.35);
     }
 
-    .back-btn {
-      background: transparent;
-      border: none;
-      color: var(--hint);
-      font-size: 0.9rem;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      margin-bottom: 14px;
-      padding: 6px 0;
-    }
-
-    .selected-summary {
-      background: rgba(59, 130, 246, 0.1);
-      border: 1px solid rgba(59, 130, 246, 0.25);
-      border-radius: 12px;
-      padding: 14px;
-      margin-bottom: 18px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
+    /* باکس پرداخت و کارت */
     .payment-box {
       background: var(--card-bg);
-      border-radius: 14px;
-      padding: 16px;
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(12px);
+      border-radius: 18px;
+      padding: 18px;
+      border: 1px solid var(--card-border);
       margin-bottom: 20px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
     }
 
     .card-display {
       direction: ltr;
-      font-size: 1.22rem;
-      font-weight: 800;
+      font-size: 1.25rem;
+      font-weight: 900;
       text-align: center;
-      background: rgba(0, 0, 0, 0.3);
-      padding: 12px;
-      border-radius: 10px;
+      background: rgba(0, 0, 0, 0.35);
+      padding: 14px;
+      border-radius: 12px;
       margin: 10px 0 6px 0;
       color: #38bdf8;
-      letter-spacing: 1.8px;
-      border: 1px dashed rgba(56, 189, 248, 0.35);
+      letter-spacing: 2px;
+      border: 1px dashed rgba(56, 189, 248, 0.4);
       cursor: pointer;
     }
 
     .copy-hint {
       text-align: center;
-      font-size: 0.75rem;
+      font-size: 0.78rem;
       color: var(--hint);
-      margin-bottom: 10px;
+      margin-bottom: 12px;
       cursor: pointer;
     }
 
     input[type="text"] {
       width: 100%;
       padding: 14px;
-      border-radius: 10px;
+      border-radius: 12px;
       border: 1px solid rgba(255, 255, 255, 0.15);
-      background: rgba(0, 0, 0, 0.25);
-      color: var(--text);
-      font-size: 0.95rem;
+      background: rgba(0, 0, 0, 0.35);
+      color: #ffffff;
+      font-size: 0.98rem;
       margin-top: 8px;
       outline: none;
+      transition: border-color 0.15s ease;
+    }
+    input[type="text"]:focus {
+      border-color: var(--cyan-accent);
     }
 
     .ltr-input {
       direction: ltr;
       text-align: left;
       font-family: monospace;
-      font-size: 1.05rem !important;
+      font-size: 1.1rem !important;
+      font-weight: bold;
+    }
+
+    .selected-summary {
+      background: rgba(59, 130, 246, 0.12);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      border-radius: 14px;
+      padding: 14px 18px;
+      margin-bottom: 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .badge-username-locked {
+      background: rgba(245, 158, 11, 0.15);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      border-radius: 12px;
+      padding: 12px 14px;
+      margin-bottom: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.9rem;
     }
 
     .step-hint {
       background: rgba(59, 130, 246, 0.1);
-      border-radius: 10px;
-      padding: 12px;
-      font-size: 0.82rem;
+      border-radius: 12px;
+      padding: 13px;
+      font-size: 0.84rem;
       line-height: 1.6;
       color: #93c5fd;
       margin-top: 14px;
@@ -326,26 +391,26 @@
 </head>
 <body>
 
-  <!-- صفحه ۱: خانه با دو دکمه مجزای خرید و تمدید -->
+  <!-- صفحه ۱: خانه با دو دکمه کاملاً مجزا -->
   <div id="page-home" class="page active">
     <div class="hero-title">به اپلیکیشن نت پرو خوش آمدید</div>
-    <div class="hero-subtitle">سرویس‌های پرسرعت و پایدار نت پرو</div>
+    <div class="hero-subtitle">سرویس‌های پرسرعت، پایدار و ایمن با آیپی اختصاصی</div>
 
     <div class="features-card">
       <div class="features-title">✨ مزایای ویژه اشتراک‌های نت پرو:</div>
       <ul class="feature-list">
         <li class="feature-item"><span class="feature-badge">✓</span> کاربری نامحدود بدون محدودیت دستگاه</li>
-        <li class="feature-item"><span class="feature-badge">✓</span> سرورهای متعدد با آیپی ثابت و اختصاصی</li>
-        <li class="feature-item"><span class="feature-badge">✓</span> سازگار با تمام ابزارهای هوش مصنوعی</li>
-        <li class="feature-item"><span class="feature-badge">✓</span> اتصال پایدار در شرایط اینترنت ملی</li>
+        <li class="feature-item"><span class="feature-badge">✓</span> سرورهای متعدد پرسرعت با آیپی ثابت و اختصاصی</li>
+        <li class="feature-item"><span class="feature-badge">✓</span> کاملاً سازگار با ابزارهای هوش مصنوعی (ChatGPT و...)</li>
+        <li class="feature-item"><span class="feature-badge">✓</span> اتصال پایدار حتی در شرایط محدودیت اینترنت</li>
       </ul>
     </div>
 
     <div class="main-actions">
-      <button type="button" id="btn-home-buy" class="btn-3d-main">
+      <button type="button" id="btn-home-buy" class="btn-3d-blue">
         🛍 خرید اشتراک جدید
       </button>
-      <button type="button" id="btn-home-renew" class="btn-3d-renew">
+      <button type="button" id="btn-home-renew" class="btn-3d-orange">
         🔄 تمدید اشتراک قبلی
       </button>
     </div>
@@ -357,41 +422,80 @@
     </div>
   </div>
 
-  <!-- صفحه ۲: تعرفه‌ها -->
+  <!-- صفحه ۲ اختصاصی تمدید: وارد کردن نام کاربری توسط کاربر -->
+  <div id="page-enter-renew-user" class="page">
+    <div class="top-bar-nav">
+      <button type="button" class="nav-btn btn-action-home">🏠 بازگشت به صفحه اصلی</button>
+      <span></span>
+    </div>
+
+    <div class="section-title">تمدید اشتراک قبلی</div>
+    
+    <div class="payment-box">
+      <label style="font-size: 0.92rem; color: #38bdf8; font-weight: 800; display: block;">
+        🔑 نام کاربری سرویسی که قصد تمدید دارید را وارد کنید:
+      </label>
+      <input type="text" id="inputRenewUsername" class="ltr-input" placeholder="مثال: ali2026 یا mohammad">
+      <div style="font-size: 0.78rem; color: var(--hint); margin-top: 8px; line-height: 1.5;">
+        * همان نام کاربری انگلیسی که در اشتراک فعلی شما فعال است را وارد فرمایید.
+      </div>
+
+      <button type="button" id="btn-confirm-renew-user" class="btn-3d-orange" style="margin-top: 20px;">
+        مرحله بعد: انتخاب پلن تمدید ←
+      </button>
+    </div>
+
+    <div class="support-btn-box">
+      <a href="https://t.me/netpro_sup" class="btn-support-link">
+        💬 ارتباط با پشتیبانی تلگرام (@netpro_sup)
+      </a>
+    </div>
+  </div>
+
+  <!-- صفحه ۳: تعرفه‌ها -->
   <div id="page-plans" class="page">
-    <button type="button" id="btn-back-home" class="back-btn">← بازگشت به صفحه اصلی</button>
+    <div class="top-bar-nav">
+      <button type="button" id="btn-back-plans" class="nav-btn">← بازگشت</button>
+      <button type="button" class="nav-btn btn-action-home">🏠 صفحه اصلی</button>
+    </div>
+
+    <div id="renew-user-badge" class="badge-username-locked" style="display: none;">
+      <span style="color: var(--hint);">تمدید برای کاربر:</span>
+      <b id="renew-user-badge-name" style="color: #f59e0b; direction: ltr; font-size: 1.05rem;">-</b>
+    </div>
+
     <div class="section-title" id="plans-header-title">انتخاب پلن اشتراک</div>
 
     <div class="plans-grid">
-      <div class="plan-btn-3d" data-name="یکماهه ۱۰ گیگابایت" data-price="137,000">
+      <div class="plan-card" data-name="یکماهه ۱۰ گیگابایت" data-price="137,000">
         <span class="plan-name">یکماهه ۱۰ گیگابایت</span>
         <span class="plan-price-tag">۱۳۷,۰۰۰ تومان</span>
       </div>
-      <div class="plan-btn-3d" data-name="یکماهه ۲۰ گیگابایت" data-price="264,000">
+      <div class="plan-card" data-name="یکماهه ۲۰ گیگابایت" data-price="264,000">
         <span class="plan-name">یکماهه ۲۰ گیگابایت</span>
         <span class="plan-price-tag">۲۶۴,۰۰۰ تومان</span>
       </div>
-      <div class="plan-btn-3d" data-name="یکماهه ۳۰ گیگابایت" data-price="384,000">
+      <div class="plan-card" data-name="یکماهه ۳۰ گیگابایت" data-price="384,000">
         <span class="plan-name">یکماهه ۳۰ گیگابایت</span>
         <span class="plan-price-tag">۳۸۴,۰۰۰ تومان</span>
       </div>
-      <div class="plan-btn-3d" data-name="یکماهه ۵۰ گیگابایت" data-price="554,000">
+      <div class="plan-card" data-name="یکماهه ۵۰ گیگابایت" data-price="554,000">
         <span class="plan-name">یکماهه ۵۰ گیگابایت</span>
         <span class="plan-price-tag">۵۵۴,۰۰۰ تومان</span>
       </div>
-      <div class="plan-btn-3d" data-name="یکماهه ۷۵ گیگابایت" data-price="814,000">
+      <div class="plan-card" data-name="یکماهه ۷۵ گیگابایت" data-price="814,000">
         <span class="plan-name">یکماهه ۷۵ گیگابایت</span>
         <span class="plan-price-tag">۸۱۴,۰۰۰ تومان</span>
       </div>
-      <div class="plan-btn-3d" data-name="یکماهه ۱۰۰ گیگابایت" data-price="1,000,000">
+      <div class="plan-card" data-name="یکماهه ۱۰۰ گیگابایت" data-price="1,000,000">
         <span class="plan-name">یکماهه ۱۰۰ گیگابایت</span>
         <span class="plan-price-tag">۱,۰۰۰,۰۰۰ تومان</span>
       </div>
-      <div class="plan-btn-3d" data-name="یکماهه ۱۵۰ گیگابایت" data-price="1,484,000">
+      <div class="plan-card" data-name="یکماهه ۱۵۰ گیگابایت" data-price="1,484,000">
         <span class="plan-name">یکماهه ۱۵۰ گیگابایت</span>
         <span class="plan-price-tag">۱,۴۸۴,۰۰۰ تومان</span>
       </div>
-      <div class="plan-btn-3d" data-name="یکماهه ۲۰۰ گیگابایت" data-price="1,854,000">
+      <div class="plan-card" data-name="یکماهه ۲۰۰ گیگابایت" data-price="1,854,000">
         <span class="plan-name">یکماهه ۲۰۰ گیگابایت</span>
         <span class="plan-price-tag">۱,۸۵۴,۰۰۰ تومان</span>
       </div>
@@ -404,46 +508,57 @@
     </div>
   </div>
 
-  <!-- صفحه ۳: پرداخت، نام کاربری و ثبت نهایی -->
+  <!-- صفحه ۴: پرداخت، فاکتور و ثبت نهایی -->
   <div id="page-pay" class="page">
-    <button type="button" id="btn-back-plans" class="back-btn">← تغییر پلن</button>
+    <div class="top-bar-nav">
+      <button type="button" id="btn-back-pay" class="nav-btn">← تغییر پلن</button>
+      <button type="button" class="nav-btn btn-action-home">🏠 صفحه اصلی</button>
+    </div>
     
     <div class="selected-summary">
       <div>
-        <div style="font-size: 0.8rem; color: var(--hint);">پلن انتخاب شده:</div>
-        <strong id="summary-plan-name" style="font-size: 1rem;">-</strong>
+        <div style="font-size: 0.8rem; color: var(--hint);">پلن انتخابی:</div>
+        <strong id="summary-plan-name" style="font-size: 1.05rem;">-</strong>
       </div>
-      <div id="summary-plan-price" style="font-weight: 800; color: var(--accent-green); font-size: 1.05rem;">-</div>
+      <div id="summary-plan-price" style="font-weight: 800; color: var(--green-accent); font-size: 1.1rem;">-</div>
     </div>
 
     <div class="payment-box">
-      <label style="font-size: 0.88rem; color: #38bdf8; font-weight: bold; display: block;" id="label-username">
-        🔑 نام کاربری سرویس (انگلیسی):
-      </label>
-      <input type="text" id="serviceUser" class="ltr-input" placeholder="مثال: ali2026 یا mohammad">
-      <div id="username-hint" style="font-size: 0.75rem; color: var(--hint); margin-top: 4px; margin-bottom: 14px;">
-        * کانفیگ شما بر اساس این نام ساخته می‌شود (فقط حروف و اعداد انگلیسی).
+      <!-- اگر خرید جدید بود اینپوت نشان داده می‌شود؛ اگر تمدید بود به صورت ثابت نمایش می‌یابد -->
+      <div id="new-user-input-group">
+        <label style="font-size: 0.9rem; color: #38bdf8; font-weight: 800; display: block;">
+          🔑 نام کاربری دلخواه برای سرویس (انگلیسی):
+        </label>
+        <input type="text" id="serviceUser" class="ltr-input" placeholder="مثال: ali2026 یا sara_vpn">
+        <div style="font-size: 0.78rem; color: var(--hint); margin-top: 6px; margin-bottom: 16px;">
+          * کانفیگ شما بر اساس این نام ساخته می‌شود (حروف و ارقام انگلیسی).
+        </div>
+      </div>
+
+      <div id="renew-user-fixed-group" style="display: none; margin-bottom: 16px;">
+        <span style="font-size: 0.85rem; color: var(--hint);">نام کاربری جهت تمدید:</span>
+        <div id="renew-fixed-username" style="font-size: 1.15rem; font-weight: 900; color: #f59e0b; direction: ltr; text-align: left; margin-top: 4px;">-</div>
       </div>
 
       <div style="font-size: 0.85rem; color: var(--hint);">شماره کارت جهت واریز مبلغ:</div>
       <div class="card-display" id="cardNum">6219 8618 1708 0335</div>
-      <div class="copy-hint" id="copyTextHint">📋 لمس کنید تا شماره کارت کپی شود</div>
-      <div style="text-align: center; font-size: 0.9rem; color: var(--hint); margin-bottom: 12px;">
-        به نام: <b style="color: var(--text);">آباده ئی</b>
+      <div class="copy-hint" id="copyTextHint">📋 برای کپی شدن شماره کارت، روی آن کلیک کنید</div>
+      <div style="text-align: center; font-size: 0.9rem; color: var(--hint); margin-bottom: 14px;">
+        به نام: <b style="color: #ffffff;">آباده ئی</b>
       </div>
 
       <label style="font-size: 0.85rem; color: var(--hint); display: block; margin-top: 14px;">
-        کد پیگیری یا شماره تراکنش:
+        کد پیگیری یا ۴ رقم آخر کارت واریزکننده:
       </label>
       <input type="text" id="refId" placeholder="مثال: 987654321">
 
       <div class="step-hint">
-        💡 پس از زدن دکمه زیر، مشخصات سفارش به ربات ارسال شده و از شما خواسته می‌شود عکس فیش را ارسال فرمایید.
+        💡 پس از زدن دکمه زیر، مشخصات ثبت شده و پیام درخواست تصویر فیش در صفحه چت تلگرام برای شما نمایش داده خواهد شد.
       </div>
     </div>
 
-    <button type="button" id="btn-submit-order" class="btn-3d-main">
-      ✅ تایید پرداخت و ثبت نهایی
+    <button type="button" id="btn-submit-order" class="btn-3d-blue">
+      ✅ تایید پرداخت و ثبت سفارش
     </button>
 
     <div class="support-btn-box">
@@ -464,7 +579,8 @@
       } catch (e) {}
     }
 
-    let orderType = "new";
+    let orderType = "new"; // "new" یا "renew"
+    let renewChosenUser = "";
     let selectedOrder = { plan: '', price: '' };
 
     function showPage(pageId) {
@@ -480,49 +596,70 @@
       window.scrollTo(0, 0);
     }
 
-    // بررسی پارامترهای آدرس برای تمدید خودکار
-    const urlParams = new URLSearchParams(window.location.search);
-    const modeParam = urlParams.get('mode');
-    const userParam = urlParams.get('user');
-
     document.addEventListener('DOMContentLoaded', () => {
-      // اگر از تلگرام برای تمدید یک اکانت خاص آمده باشد
-      if (modeParam === 'renew' && userParam) {
-        orderType = "renew";
-        document.getElementById('serviceUser').value = userParam;
-        document.getElementById('serviceUser').disabled = true;
-        document.getElementById('label-username').innerText = "🔑 نام کاربری سرویس جهت تمدید:";
-        document.getElementById('username-hint').innerText = `* تمدید برای اکانت ${userParam} انجام خواهد شد.`;
-        document.getElementById('plans-header-title').innerText = `تمدید اشتراک (${userParam})`;
-        showPage('page-plans');
-      }
+      // تمام دکمه‌های بازگشت به صفحه اصلی
+      document.querySelectorAll('.btn-action-home').forEach(btn => {
+        btn.onclick = () => showPage('page-home');
+      });
 
-      // دکمه خرید اشتراک جدید
+      // دکمه ۱: خرید اشتراک جدید
       document.getElementById('btn-home-buy').onclick = () => {
         orderType = "new";
-        document.getElementById('serviceUser').value = "";
-        document.getElementById('serviceUser').disabled = false;
-        document.getElementById('label-username').innerText = "🔑 نام کاربری سرویس (انگلیسی):";
-        document.getElementById('username-hint').innerText = "* کانفیگ شما بر اساس این نام ساخته می‌شود (فقط حروف و اعداد انگلیسی).";
+        renewChosenUser = "";
+        document.getElementById('renew-user-badge').style.display = 'none';
         document.getElementById('plans-header-title').innerText = "انتخاب پلن اشتراک جدید";
+        document.getElementById('new-user-input-group').style.display = 'block';
+        document.getElementById('renew-user-fixed-group').style.display = 'none';
+        document.getElementById('serviceUser').value = "";
         showPage('page-plans');
       };
 
-      // دکمه تمدید اشتراک قبلی
+      // دکمه ۲: تمدید اشتراک قبلی (هدایت به صفحه وارد کردن یوزرنیم)
       document.getElementById('btn-home-renew').onclick = () => {
         orderType = "renew";
-        document.getElementById('serviceUser').value = "";
-        document.getElementById('serviceUser').disabled = false;
-        document.getElementById('label-username').innerText = "🔑 نام کاربری قبلی جهت تمدید:";
-        document.getElementById('username-hint').innerText = "* نام کاربری کانفیگ فعلی خود را وارد فرمایید تا همان سرویس تمدید شود.";
-        document.getElementById('plans-header-title').innerText = "انتخاب پلن تمدید اشتراک";
+        document.getElementById('inputRenewUsername').value = "";
+        showPage('page-enter-renew-user');
+      };
+
+      // تایید نام کاربری تمدید و رفتن به انتخاب پلن
+      document.getElementById('btn-confirm-renew-user').onclick = () => {
+        const val = document.getElementById('inputRenewUsername').value.trim().toLowerCase();
+        if (!val) {
+          alert('لطفاً نام کاربری اشتراک خود را وارد فرمایید.');
+          return;
+        }
+        const validRegex = /^[a-zA-Z0-9_\-\.]+$/;
+        if (!validRegex.test(val)) {
+          alert('نام کاربری فقط باید شامل حروف و ارقام انگلیسی باشد.');
+          return;
+        }
+
+        renewChosenUser = val;
+        document.getElementById('renew-user-badge').style.display = 'flex';
+        document.getElementById('renew-user-badge-name').innerText = val;
+        document.getElementById('plans-header-title').innerText = `تمدید اشتراک (${val})`;
+
+        document.getElementById('new-user-input-group').style.display = 'none';
+        document.getElementById('renew-user-fixed-group').style.display = 'block';
+        document.getElementById('renew-fixed-username').innerText = val;
+
         showPage('page-plans');
       };
 
-      document.getElementById('btn-back-home').onclick = () => showPage('page-home');
-      document.getElementById('btn-back-plans').onclick = () => showPage('page-plans');
+      // بازگشت از صفحه پلن‌ها
+      document.getElementById('btn-back-plans').onclick = () => {
+        if (orderType === "renew") {
+          showPage('page-enter-renew-user');
+        } else {
+          showPage('page-home');
+        }
+      };
 
-      document.querySelectorAll('.plan-btn-3d').forEach(btn => {
+      // بازگشت از صفحه پرداخت
+      document.getElementById('btn-back-pay').onclick = () => showPage('page-plans');
+
+      // کلیک روی پلن‌ها
+      document.querySelectorAll('.plan-card').forEach(btn => {
         btn.onclick = function() {
           const name = this.getAttribute('data-name');
           const price = this.getAttribute('data-price');
@@ -534,6 +671,7 @@
         };
       });
 
+      // کپی شماره کارت
       const copyCard = () => {
         const raw = "6219861817080335";
         if (navigator.clipboard && navigator.clipboard.writeText) {
@@ -549,26 +687,31 @@
       document.getElementById('cardNum').onclick = copyCard;
       document.getElementById('copyTextHint').onclick = copyCard;
 
-      // تایید نهایی و ارسال به مشتری و ادمین
+      // ثبت نهایی سفارش
       document.getElementById('btn-submit-order').onclick = async function() {
-        const sUserInput = document.getElementById('serviceUser');
-        const sUser = sUserInput ? sUserInput.value.trim().toLowerCase() : '';
+        let finalUsername = "";
+        if (orderType === "renew") {
+          finalUsername = renewChosenUser;
+        } else {
+          finalUsername = document.getElementById('serviceUser').value.trim().toLowerCase();
+        }
+
+        if (!finalUsername) {
+          alert('لطفاً نام کاربری سرویس را مشخص فرمایید.');
+          return;
+        }
+
+        const validRegex = /^[a-zA-Z0-9_\-\.]+$/;
+        if (!validRegex.test(finalUsername)) {
+          alert('نام کاربری فقط باید شامل حروف و ارقام انگلیسی باشد.');
+          return;
+        }
+
         const refInput = document.getElementById('refId');
         const refVal = refInput ? refInput.value.trim() : '';
 
-        if (!sUser) {
-          alert('لطفاً نام کاربری انگلیسی سرویس را وارد فرمایید.');
-          return;
-        }
-
-        const validUserRegex = /^[a-zA-Z0-9_\-\.]+$/;
-        if (!validUserRegex.test(sUser)) {
-          alert('نام کاربری فقط باید شامل حروف و اعداد انگلیسی باشد.');
-          return;
-        }
-
         if (!refVal) {
-          alert('لطفاً شماره تراکنش یا کد پیگیری را وارد فرمایید.');
+          alert('لطفاً شماره پیگیری یا ۴ رقم آخر کارت را وارد فرمایید.');
           return;
         }
 
@@ -579,23 +722,22 @@
         const user = (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) ? tg.initDataUnsafe.user : null;
         const planName = selectedOrder.plan || "یکماهه ۲۰ گیگابایت";
         const planPrice = selectedOrder.price || "۲۶۴,۰۰۰";
-        const typeLabel = orderType === "renew" ? "تمدید اشتراک" : "خرید اشتراک جدید";
+        const typeLabel = orderType === "renew" ? "🔄 تمدید اشتراک" : "🛍 خرید اشتراک جدید";
 
         const customerMsg = 
           `🧾 <b>فاکتور ${typeLabel} با موفقیت ثبت شد:</b>\n\n` +
-          `🔑 <b>نام کاربری سرویس:</b> <code>${sUser}</code>\n` +
+          `🔑 <b>نام کاربری سرویس:</b> <code>${finalUsername}</code>\n` +
           `📦 <b>سرویس انتخابی:</b> ${planName}\n` +
           `💰 <b>مبلغ پرداختی:</b> ${planPrice} تومان\n` +
           `🔢 <b>شماره پیگیری / تراکنش:</b> <code>${refVal}</code>\n\n` +
           "📸 <b>لطفاً تصویر رسید (فیش واریزی) خود را در همین صفحه ارسال فرمایید.</b>\n" +
           "⏳ پس از بررسی رسید توسط پشتیبانی، سرویس فعال خواهد شد.";
 
-        // پیام هشدار ویژه ادمین شامل نام کاربری انتخابی
         const adminAlertMsg = 
           `⚡️ <b>سفارش جدید ثبت شد (${typeLabel}):</b>\n\n` +
           `👤 خریدار: ${user ? (user.first_name || '') + ' ' + (user.last_name || '') : 'ناشناس'} (@${user ? (user.username || 'ندارد') : '-'})\n` +
           `🆔 شناسه: <code>${user ? user.id : '-'}</code>\n` +
-          `🔑 <b>نام کاربری انتخابی مشتری:</b> <code>${sUser}</code>\n` +
+          `🔑 <b>نام کاربری انتخابی مشتری:</b> <code>${finalUsername}</code>\n` +
           `📦 پلن: <b>${planName}</b>\n` +
           `💰 مبلغ: ${planPrice} تومان\n` +
           `🔢 پیگیری: <code>${refVal}</code>\n\n` +
@@ -603,7 +745,6 @@
 
         if (user && user.id) {
           try {
-            // ۱. ارسال فاکتور برای مشتری
             await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
@@ -614,7 +755,6 @@
               })
             });
 
-            // ۲. ارسال مشخصات کامل برای ادمین (شامل نام کاربری انتخابی)
             await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
