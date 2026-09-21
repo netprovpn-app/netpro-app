@@ -215,15 +215,15 @@
 </head>
 <body>
 
-  <!-- صفحه ۱: صفحه اصلی -->
+  <!-- صفحه ۱: منوی اصلی وب‌اپ -->
   <div id="page-home" class="page active">
     <div class="user-badge-bar">
       <span>👤 <b id="user-display-name">کاربر نت پرو</b></span>
-      <span>⚡️ آیپی ثابت و اختصاصی</span>
+      <span>⚡️ آیپی اختصاصی و نامحدود</span>
     </div>
 
     <div class="hero-title">اپلیکیشن نت پرو</div>
-    <div class="hero-subtitle">سرویس‌های پرسرعت، پایدار و ایمن بدون قطعی</div>
+    <div class="hero-subtitle">سرویس‌های پرسرعت، پایدار و ایمن با پروتکل‌های نوین</div>
 
     <div class="menu-grid">
       <button type="button" id="m-btn-buy" class="btn-menu btn-blue">
@@ -232,7 +232,7 @@
       </button>
 
       <button type="button" id="m-btn-renew" class="btn-menu btn-orange">
-        <span>🔄 تمدید سرویس قبلی</span>
+        <span>🔄 تمدید اشتراک قبلی</span>
         <span>←</span>
       </button>
 
@@ -308,7 +308,7 @@
     </div>
   </div>
 
-  <!-- صفحه ۴: فاکتور خرید و تمدید -->
+  <!-- صفحه ۴: فاکتور پرداخت و کارت به کارت -->
   <div id="page-pay" class="page">
     <div class="top-nav">
       <button type="button" class="nav-btn" onclick="showPage('page-plans')">← تغییر پلن</button>
@@ -322,7 +322,7 @@
       </div>
 
       <div id="user-input-section">
-        <label style="font-size: 0.85rem; color: var(--hint);" id="lblServiceUser">نام کاربری انگلیسی دلخواه سرویس:</label>
+        <label style="font-size: 0.85rem; color: var(--hint);" id="lblServiceUser">نام کاربری انگلیسی سرویس:</label>
         <input type="text" id="targetServiceUsername" class="ltr-input" placeholder="مثال: ali2026">
       </div>
 
@@ -334,7 +334,7 @@
       <input type="text" id="payRefId" placeholder="مثال: 987654">
 
       <button type="button" id="btn-submit-pay" class="btn-menu btn-blue" style="justify-content: center; margin-top: 20px;">
-        ✅ تایید و ثبت سفارش
+        ✅ تایید و ثبت نهایی فاکتور
       </button>
     </div>
   </div>
@@ -388,7 +388,6 @@
     let currentUserId = tg && tg.initDataUnsafe && tg.initDataUnsafe.user ? tg.initDataUnsafe.user.id : 100161863;
     let currentUserName = tg && tg.initDataUnsafe && tg.initDataUnsafe.user ? tg.initDataUnsafe.user.first_name : "کاربر";
 
-    // ساختار وضعیت با تضمین نوع پیش‌فرض روی خرید جدید
     let state = {
       orderType: "new", // "new" | "renew" | "extra" | "wallet"
       selectedPlan: "یکماهه ۲۰ گیگابایت",
@@ -434,7 +433,7 @@
       if (priceEl) priceEl.innerText = cost.toLocaleString() + ' تومان';
     }
 
-    // ارسال مستقیم فاکتور به چت تلگرام کاربر و ادمین
+    // ارسال مستقیم فاکتور به چت کاربر و پی‌وی ادمین با متد رسمی Bot API
     async function sendOrderDirectly(payload) {
       const btn = document.activeElement;
       if (btn) btn.innerText = "⏳ در حال ثبت...";
@@ -463,7 +462,7 @@
                        `📦 مشخصات: ${payload.plan}\n` +
                        `💰 مبلغ: ${payload.price} تومان\n` +
                        `🔢 پیگیری: <code>${payload.ref_id}</code>\n` +
-                       `🏷 نوع: ${payload.order_type}`;
+                       `🏷 نوع: ${payload.order_type === 'renew' ? '🔄 تمدید سرویس' : (payload.order_type === 'extra' ? '➕ حجم اضافه' : '🛍 خرید جدید')}`;
 
       try {
         await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
@@ -495,6 +494,21 @@
       document.querySelectorAll('.btn-go-home').forEach(b => {
         b.onclick = () => showPage('page-home');
       });
+
+      // بررسی پارامترهای لینک (مثلاً ورود مستقیم کاربر از ربات برای تمدید)
+      const urlParams = new URLSearchParams(window.location.search);
+      const modeParam = urlParams.get('mode');
+      const userParam = urlParams.get('user');
+
+      if (modeParam === 'renew') {
+        state.orderType = "renew";
+        document.getElementById('plansHeaderTitle').innerText = "انتخاب پلن تمدید اشتراک";
+        document.getElementById('lblServiceUser').innerText = "نام کاربری اشتراک قبلی جهت تمدید:";
+        if (userParam) {
+          document.getElementById('targetServiceUsername').value = userParam;
+        }
+        showPage('page-plans');
+      }
 
       // ۱. دکمه خرید اشتراک جدید
       document.getElementById('m-btn-buy').onclick = () => {
@@ -540,7 +554,7 @@
         };
       });
 
-      // تایید نهایی خرید یا تمدید
+      // تایید نهایی فاکتور خرید یا تمدید
       document.getElementById('btn-submit-pay').onclick = function() {
         const u = document.getElementById('targetServiceUsername').value.trim().toLowerCase();
         const ref = document.getElementById('payRefId').value.trim();
@@ -559,7 +573,7 @@
           plan: state.selectedPlan,
           price: state.selectedPrice,
           ref_id: ref,
-          order_type: state.orderType
+          order_type: state.orderType // به طور دقیق "new" یا "renew" لحاظ می‌شود
         });
       };
 
