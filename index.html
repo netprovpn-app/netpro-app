@@ -12,7 +12,7 @@
   <style>
     :root {
       --bg-dark: #090d16;
-      --card-bg: rgba(22, 30, 49, 0.78);
+      --card-bg: rgba(22, 30, 49, 0.82);
       --card-border: rgba(56, 189, 248, 0.22);
       --text: #f8fafc;
       --hint: #94a3b8;
@@ -301,7 +301,7 @@
     </div>
   </div>
 
-  <!-- صفحه ۴: خرید حجم اضافه دلخواه -->
+  <!-- صفحه ۴: خرید حجم اضافه -->
   <div id="page-buy-extra" class="page">
     <div class="top-nav">
       <button type="button" class="nav-btn" onclick="showPage('page-services')">← بازگشت</button>
@@ -385,7 +385,7 @@
     </div>
   </div>
 
-  <!-- صفحه ۷: کیف پول با شارژ رقم دلخواه -->
+  <!-- صفحه ۷: کیف پول با شارژ دلخواه -->
   <div id="page-wallet" class="page">
     <div class="top-nav">
       <button type="button" class="nav-btn btn-go-home">🏠 صفحه اصلی</button>
@@ -401,7 +401,6 @@
         <span style="font-size: 0.78rem; color: var(--hint);">مبلغ مورد نظر را به تومان وارد کنید:</span>
         <input type="number" id="inputCustomWalletAmount" placeholder="مثال: 50000" style="direction: ltr; text-align: center; font-size: 1.15rem; font-weight: 800; margin: 8px 0 12px 0;">
 
-        <!-- دکمه‌های سریع مبالغ -->
         <div style="display: flex; gap: 6px; margin-bottom: 14px;">
           <button type="button" class="nav-btn" style="flex: 1;" onclick="setWalletAmt(50000)">۵۰ هزار</button>
           <button type="button" class="nav-btn" style="flex: 1;" onclick="setWalletAmt(100000)">۱۰۰ هزار</button>
@@ -420,10 +419,15 @@
   </div>
 
   <script>
-    const SERVER_API_IP = "82.115.25.138";
-    const tg = window.Telegram ? window.Telegram.WebApp : null;
+    const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
+
     if (tg) {
-      try { tg.ready(); tg.expand(); } catch (e) {}
+      try {
+        tg.ready();
+        tg.expand();
+      } catch (e) {
+        console.error("TG Init Error:", e);
+      }
     }
 
     let currentUserId = tg && tg.initDataUnsafe && tg.initDataUnsafe.user ? tg.initDataUnsafe.user.id : 100161863;
@@ -434,8 +438,8 @@
       isMember: true,
       services: [],
       orderType: "new",
-      selectedPlan: "",
-      selectedPrice: "",
+      selectedPlan: "یکماهه ۲۰ گیگابایت",
+      selectedPrice: "264,000",
       extraTargetUser: "",
       extraGb: 5
     };
@@ -453,238 +457,212 @@
       window.scrollTo(0, 0);
     }
 
-    // استعلام مشخصات کاربر و سرویس‌ها
-    async function fetchUserData() {
-      try {
-        const res = await fetch(`http://${SERVER_API_IP}:8080/api/user_overview?user_id=${currentUserId}`);
-        const data = await res.json();
-        state.wallet = data.wallet || 0;
-        state.isMember = data.is_member;
-        state.services = data.services || [];
-
-        document.getElementById('user-wallet-bal').innerText = state.wallet.toLocaleString();
-        document.getElementById('wallet-big-bal').innerText = state.wallet.toLocaleString() + ' تومان';
-
-        if (!state.isMember) {
-          showPage('page-lock');
-          return;
-        }
-        renderServices();
-      } catch (e) {
-        console.error("API error:", e);
-      }
-    }
-
-    // ارسال مستقیم سفارش به سرور پایتون
-    async function sendOrderDirectly(payload, successMsg) {
-      payload.user_id = currentUserId;
-      try {
-        const btn = document.activeElement;
-        if (btn) btn.innerText = "⏳ در حال ارسال...";
-
-        const response = await fetch(`http://${SERVER_API_IP}:8080/api/submit_order`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload)
-        });
-        const resJson = await response.json();
-
-        if (resJson.success) {
-          alert(successMsg);
-          if (tg && typeof tg.close === 'function') {
-            tg.close();
-          }
-        } else {
-          alert("خطا در ثبت سفارش: " + (resJson.error || "خطای ناشناخته"));
-          if (btn) btn.innerText = "تلاش مجدد";
-        }
-      } catch (err) {
-        alert("سفارش شما با موفقیت به سرور ارسال شد. لطفاً تصویر فیش را در چت ارسال فرمایید.");
-        if (tg && typeof tg.close === 'function') tg.close();
-      }
-    }
-
-    function renderServices() {
-      const container = document.getElementById('services-container');
-      if (!state.services.length) {
-        container.innerHTML = `
-          <div class="service-card" style="text-align: center;">
-            <p style="color: var(--hint);">هیچ اشتراکی برای شما ثبت نشده است.</p>
-            <button type="button" class="btn-menu btn-blue" style="justify-content: center;" onclick="showPage('page-plans')">
-              🛍 خرید اولین اشتراک
-            </button>
-          </div>
-        `;
-        return;
-      }
-
-      container.innerHTML = state.services.map(s => {
-        const pct = s.limit_gb > 0 ? Math.min(100, Math.round((s.used_gb / s.limit_gb) * 100)) : 0;
-        return `
-          <div class="service-card">
-            <div class="service-header">
-              <span style="font-weight: 800; font-size: 1.05rem; direction: ltr;">${s.username}</span>
-              <span style="color: ${s.status === 'active' ? '#10b981' : '#ef4444'}; font-size: 0.85rem; font-weight: 700;">
-                ${s.status === 'active' ? '🟢 فعال' : '🔴 منقضی'}
-              </span>
-            </div>
-
-            <div style="display: flex; justify-content: space-between; font-size: 0.85rem; color: var(--hint);">
-              <span>مصرف: <b>${s.used_gb} GB</b> از ${s.limit_gb} GB</span>
-              <span>باقی‌مانده: <b style="color: #38bdf8;">${s.remain_gb} GB</b></span>
-            </div>
-
-            <div class="progress-bar-bg">
-              <div class="progress-bar-fill" style="width: ${pct}%;"></div>
-            </div>
-
-            <div style="font-size: 0.85rem; color: var(--hint); margin-bottom: 12px;">
-              اعتبار زمانی: <b>${s.days_left} روز باقی‌مانده</b>
-            </div>
-
-            <div style="display: flex; gap: 8px;">
-              <button type="button" class="btn-menu btn-orange" style="padding: 10px; font-size: 0.88rem; justify-content: center; flex: 1;" onclick="openBuyExtra('${s.username}')">
-                ➕ خرید حجم اضافه
-              </button>
-              <button type="button" class="btn-menu btn-card-gray" style="padding: 10px; font-size: 0.88rem; justify-content: center; flex: 1;" onclick="renewService('${s.username}')">
-                🔄 تمدید دوره
-              </button>
-            </div>
-          </div>
-        `;
-      }).join('');
-    }
-
-    function openBuyExtra(user) {
-      state.extraTargetUser = user;
-      document.getElementById('extra-target-user').innerText = user;
-      updateExtraCost();
-      showPage('page-buy-extra');
-    }
-
-    function updateExtraCost() {
-      const gb = parseInt(document.getElementById('inputExtraGb').value) || 1;
-      const cost = gb * 10000;
-      document.getElementById('extra-total-price').innerText = cost.toLocaleString() + ' تومان';
-    }
-
-    document.getElementById('inputExtraGb').oninput = updateExtraCost;
-
-    function renewService(user) {
-      state.orderType = "renew";
-      document.getElementById('targetServiceUsername').value = user;
-      document.getElementById('user-input-section').style.display = 'none';
-      showPage('page-plans');
-    }
-
     function setWalletAmt(val) {
-      document.getElementById('inputCustomWalletAmount').value = val;
+      const input = document.getElementById('inputCustomWalletAmount');
+      if (input) input.value = val;
     }
 
     function copyCard() {
       const c = "6219861817080335";
-      if (navigator.clipboard) navigator.clipboard.writeText(c);
-      alert("شماره کارت کپی شد: " + c);
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(c).then(() => {
+          alert("شماره کارت کپی شد: " + c);
+        }).catch(() => {
+          prompt("شماره کارت را کپی کنید:", c);
+        });
+      } else {
+        prompt("شماره کارت را کپی کنید:", c);
+      }
+    }
+
+    function updateExtraCost() {
+      const input = document.getElementById('inputExtraGb');
+      const gb = input ? (parseInt(input.value) || 1) : 1;
+      const cost = gb * 10000;
+      const priceEl = document.getElementById('extra-total-price');
+      if (priceEl) priceEl.innerText = cost.toLocaleString() + ' تومان';
+    }
+
+    function openBuyExtra(user) {
+      state.extraTargetUser = user;
+      const targetEl = document.getElementById('extra-target-user');
+      if (targetEl) targetEl.innerText = user;
+      updateExtraCost();
+      showPage('page-buy-extra');
+    }
+
+    function renewService(user) {
+      state.orderType = "renew";
+      const uInput = document.getElementById('targetServiceUsername');
+      if (uInput) uInput.value = user;
+      const section = document.getElementById('user-input-section');
+      if (section) section.style.display = 'none';
+      showPage('page-plans');
+    }
+
+    // ارسال استاندارد دیتا به تلگرام همراه با کنترل بسته شدن پنجره
+    function dispatchTelegramData(payload) {
+      if (tg && typeof tg.sendData === 'function') {
+        try {
+          tg.sendData(JSON.stringify(payload));
+          setTimeout(() => {
+            try { tg.close(); } catch (err) {}
+          }, 450);
+        } catch (e) {
+          alert("خطا در ارسال اطلاعات به ربات: " + e.message);
+        }
+      } else {
+        alert("سفارش شما با موفقیت ثبت شد.\nلطفاً این عملیات را در تلگرام انجام دهید تا فاکتور به صفحه چت ارسال شود.");
+      }
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-      document.getElementById('user-display-name').innerText = currentUserName;
-      document.querySelectorAll('.btn-go-home').forEach(b => b.onclick = () => showPage('page-home'));
+      const nameEl = document.getElementById('user-display-name');
+      if (nameEl) nameEl.innerText = currentUserName;
 
-      document.getElementById('m-btn-buy').onclick = () => {
-        state.orderType = "new";
-        document.getElementById('user-input-section').style.display = 'block';
-        document.getElementById('targetServiceUsername').value = "";
-        showPage('page-plans');
-      };
+      document.querySelectorAll('.btn-go-home').forEach(b => {
+        b.onclick = () => showPage('page-home');
+      });
 
-      document.getElementById('m-btn-renew').onclick = () => showPage('page-services');
-      document.getElementById('m-btn-services').onclick = () => showPage('page-services');
-      document.getElementById('m-btn-wallet').onclick = () => showPage('page-wallet');
-      document.getElementById('btn-recheck-sub').onclick = fetchUserData;
+      const btnBuy = document.getElementById('m-btn-buy');
+      if (btnBuy) {
+        btnBuy.onclick = () => {
+          state.orderType = "new";
+          const section = document.getElementById('user-input-section');
+          if (section) section.style.display = 'block';
+          const uInput = document.getElementById('targetServiceUsername');
+          if (uInput) uInput.value = "";
+          showPage('page-plans');
+        };
+      }
 
+      const btnRenew = document.getElementById('m-btn-renew');
+      if (btnRenew) btnRenew.onclick = () => showPage('page-services');
+
+      const btnServices = document.getElementById('m-btn-services');
+      if (btnServices) btnServices.onclick = () => showPage('page-services');
+
+      const btnWallet = document.getElementById('m-btn-wallet');
+      if (btnWallet) btnWallet.onclick = () => showPage('page-wallet');
+
+      const inputExtra = document.getElementById('inputExtraGb');
+      if (inputExtra) inputExtra.oninput = updateExtraCost;
+
+      // انتخاب پلن
       document.querySelectorAll('.plan-card').forEach(c => {
         c.onclick = function() {
           state.selectedPlan = this.getAttribute('data-name');
           state.selectedPrice = this.getAttribute('data-price');
-          document.getElementById('pay-plan-name').innerText = state.selectedPlan;
-          document.getElementById('pay-plan-price').innerText = state.selectedPrice + ' تومان';
+          const nameEl = document.getElementById('pay-plan-name');
+          const priceEl = document.getElementById('pay-plan-price');
+          if (nameEl) nameEl.innerText = state.selectedPlan;
+          if (priceEl) priceEl.innerText = state.selectedPrice + ' تومان';
           showPage('page-pay');
         };
       });
 
-      // ثبت سفارش معمولی خرید یا تمدید
-      document.getElementById('btn-submit-pay').onclick = function() {
-        const u = document.getElementById('targetServiceUsername').value.trim().toLowerCase();
-        const ref = document.getElementById('payRefId').value.trim();
-        if (!u) { alert('نام کاربری سرویس را وارد کنید.'); return; }
-        if (!ref) { alert('شماره پیگیری یا ۴ رقم کارت را وارد فرمایید.'); return; }
+      // ۱. ثبت فاکتور خرید / تمدید
+      const btnSubmitPay = document.getElementById('btn-submit-pay');
+      if (btnSubmitPay) {
+        btnSubmitPay.onclick = function() {
+          const uInput = document.getElementById('targetServiceUsername');
+          const refInput = document.getElementById('payRefId');
+          const u = uInput ? uInput.value.trim().toLowerCase() : '';
+          const ref = refInput ? refInput.value.trim() : '';
 
-        const payload = {
-          service_username: u,
-          plan: state.selectedPlan,
-          price: state.selectedPrice,
-          ref_id: ref,
-          order_type: state.orderType,
-          pay_method: "card"
+          if (!u) {
+            alert('لطفاً نام کاربری سرویس را وارد کنید.');
+            return;
+          }
+          if (!ref) {
+            alert('لطفاً شماره پیگیری یا ۴ رقم آخر کارت را وارد فرمایید.');
+            return;
+          }
+
+          const payload = {
+            service_username: u,
+            plan: state.selectedPlan,
+            price: state.selectedPrice,
+            ref_id: ref,
+            order_type: state.orderType,
+            pay_method: "card"
+          };
+
+          dispatchTelegramData(payload);
         };
-        sendOrderDirectly(payload, "✅ سفارش شما با موفقیت ثبت شد!\nفاکتور در چت ربات ارسال گردید؛ لطفاً تصویر فیش واریزی را ارسال فرمایید.");
-      };
+      }
 
-      // پرداخت حجم اضافه با کیف پول
-      document.getElementById('btn-pay-extra-wallet').onclick = function() {
-        const gb = parseInt(document.getElementById('inputExtraGb').value) || 1;
-        const cost = gb * 10000;
-        if (state.wallet < cost) {
-          alert('موجودی کیف پول شما کافی نیست. لطفاً کیف پول را شارژ نمایید یا از گزینه کارت به کارت استفاده فرمایید.');
-          return;
-        }
-        const payload = {
-          service_username: state.extraTargetUser,
-          plan: `حجم اضافه ${gb} گیگابایت`,
-          price: cost.toLocaleString(),
-          ref_id: "کیف_پول",
-          order_type: "extra",
-          pay_method: "wallet"
+      // ۲. پرداخت حجم اضافه با کیف پول
+      const btnExtraWallet = document.getElementById('btn-pay-extra-wallet');
+      if (btnExtraWallet) {
+        btnExtraWallet.onclick = function() {
+          const gbInput = document.getElementById('inputExtraGb');
+          const gb = gbInput ? (parseInt(gbInput.value) || 1) : 1;
+          const cost = gb * 10000;
+
+          const payload = {
+            service_username: state.extraTargetUser || "کاربر",
+            plan: `حجم اضافه ${gb} گیگابایت`,
+            price: cost.toLocaleString(),
+            ref_id: "کیف_پول",
+            order_type: "extra",
+            pay_method: "wallet"
+          };
+
+          dispatchTelegramData(payload);
         };
-        sendOrderDirectly(payload, `🎉 حجم اضافه (${gb}GB) با موفقیت اعمال گردید و از کیف پول شما کسر شد!`);
-      };
+      }
 
-      // پرداخت حجم اضافه با کارت به کارت
-      document.getElementById('btn-pay-extra-card').onclick = function() {
-        const gb = parseInt(document.getElementById('inputExtraGb').value) || 1;
-        const cost = gb * 10000;
-        state.selectedPlan = `حجم اضافه ${gb} گیگابایت`;
-        state.selectedPrice = cost.toLocaleString();
-        state.orderType = "extra";
-        document.getElementById('targetServiceUsername').value = state.extraTargetUser;
-        document.getElementById('user-input-section').style.display = 'none';
-        document.getElementById('pay-plan-name').innerText = state.selectedPlan;
-        document.getElementById('pay-plan-price').innerText = state.selectedPrice + ' تومان';
-        showPage('page-pay');
-      };
+      // ۳. پرداخت حجم اضافه با کارت به کارت
+      const btnExtraCard = document.getElementById('btn-pay-extra-card');
+      if (btnExtraCard) {
+        btnExtraCard.onclick = function() {
+          const gbInput = document.getElementById('inputExtraGb');
+          const gb = gbInput ? (parseInt(gbInput.value) || 1) : 1;
+          const cost = gb * 10000;
+          state.selectedPlan = `حجم اضافه ${gb} گیگابایت`;
+          state.selectedPrice = cost.toLocaleString();
+          state.orderType = "extra";
 
-      // ثبت درخواست شارژ دلخواه کیف پول
-      document.getElementById('btn-submit-wallet-charge').onclick = function() {
-        const amtInput = document.getElementById('inputCustomWalletAmount').value.trim();
-        const amt = parseInt(amtInput);
-        if (!amt || amt < 10000) {
-          alert('لطفاً مبلغ معتبری وارد فرمایید (حداقل ۱۰,۰۰۰ تومان).');
-          return;
-        }
+          const uInput = document.getElementById('targetServiceUsername');
+          if (uInput) uInput.value = state.extraTargetUser;
+          const section = document.getElementById('user-input-section');
+          if (section) section.style.display = 'none';
 
-        const payload = {
-          service_username: "کیف_پول",
-          plan: "شارژ کیف پول",
-          price: amt.toLocaleString(),
-          ref_id: "فیش_واریزی",
-          order_type: "wallet",
-          pay_method: "card"
+          const nameEl = document.getElementById('pay-plan-name');
+          const priceEl = document.getElementById('pay-plan-price');
+          if (nameEl) nameEl.innerText = state.selectedPlan;
+          if (priceEl) priceEl.innerText = state.selectedPrice + ' تومان';
+
+          showPage('page-pay');
         };
-        sendOrderDirectly(payload, `✅ درخواست شارژ ${amt.toLocaleString()} تومانی با موفقیت ثبت شد!\nلطفاً تصویر فیش واریزی را در چت ربات ارسال فرمایید.`);
-      };
+      }
 
-      fetchUserData();
+      // ۴. شارژ دلخواه کیف پول
+      const btnSubmitWallet = document.getElementById('btn-submit-wallet-charge');
+      if (btnSubmitWallet) {
+        btnSubmitWallet.onclick = function() {
+          const amtInput = document.getElementById('inputCustomWalletAmount');
+          const amtVal = amtInput ? amtInput.value.trim() : '';
+          const amt = parseInt(amtVal);
+
+          if (!amt || amt < 10000) {
+            alert('لطفاً مبلغ معتبری وارد فرمایید (حداقل ۱۰,۰۰۰ تومان).');
+            return;
+          }
+
+          const payload = {
+            service_username: "کیف_پول",
+            plan: "شارژ کیف پول",
+            price: amt.toLocaleString(),
+            ref_id: "فیش_واریزی",
+            order_type: "wallet",
+            pay_method: "card"
+          };
+
+          dispatchTelegramData(payload);
+        };
+      }
     });
   </script>
 </body>
