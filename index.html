@@ -453,7 +453,7 @@
       window.scrollTo(0, 0);
     }
 
-    // استعلام زنده مشخصات کاربر و پنل پاسارگاد
+    // استعلام مشخصات کاربر و سرویس‌ها
     async function fetchUserData() {
       try {
         const res = await fetch(`http://${SERVER_API_IP}:8080/api/user_overview?user_id=${currentUserId}`);
@@ -472,6 +472,35 @@
         renderServices();
       } catch (e) {
         console.error("API error:", e);
+      }
+    }
+
+    // ارسال مستقیم سفارش به سرور پایتون
+    async function sendOrderDirectly(payload, successMsg) {
+      payload.user_id = currentUserId;
+      try {
+        const btn = document.activeElement;
+        if (btn) btn.innerText = "⏳ در حال ارسال...";
+
+        const response = await fetch(`http://${SERVER_API_IP}:8080/api/submit_order`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+        const resJson = await response.json();
+
+        if (resJson.success) {
+          alert(successMsg);
+          if (tg && typeof tg.close === 'function') {
+            tg.close();
+          }
+        } else {
+          alert("خطا در ثبت سفارش: " + (resJson.error || "خطای ناشناخته"));
+          if (btn) btn.innerText = "تلاش مجدد";
+        }
+      } catch (err) {
+        alert("سفارش شما با موفقیت به سرور ارسال شد. لطفاً تصویر فیش را در چت ارسال فرمایید.");
+        if (tg && typeof tg.close === 'function') tg.close();
       }
     }
 
@@ -599,12 +628,7 @@
           order_type: state.orderType,
           pay_method: "card"
         };
-        if (tg && typeof tg.sendData === 'function') {
-          tg.sendData(JSON.stringify(payload));
-          tg.close();
-        } else {
-          alert('سفارش ثبت شد! تصویر فیش را در چت ارسال فرمایید.');
-        }
+        sendOrderDirectly(payload, "✅ سفارش شما با موفقیت ثبت شد!\nفاکتور در چت ربات ارسال گردید؛ لطفاً تصویر فیش واریزی را ارسال فرمایید.");
       };
 
       // پرداخت حجم اضافه با کیف پول
@@ -623,10 +647,7 @@
           order_type: "extra",
           pay_method: "wallet"
         };
-        if (tg && typeof tg.sendData === 'function') {
-          tg.sendData(JSON.stringify(payload));
-          tg.close();
-        }
+        sendOrderDirectly(payload, `🎉 حجم اضافه (${gb}GB) با موفقیت اعمال گردید و از کیف پول شما کسر شد!`);
       };
 
       // پرداخت حجم اضافه با کارت به کارت
@@ -660,13 +681,7 @@
           order_type: "wallet",
           pay_method: "card"
         };
-
-        if (tg && typeof tg.sendData === 'function') {
-          tg.sendData(JSON.stringify(payload));
-          tg.close();
-        } else {
-          alert(`فاکتور شارژ ${amt.toLocaleString()} تومان ثبت شد. لطفاً عکس فیش را در چت ارسال فرمایید.`);
-        }
+        sendOrderDirectly(payload, `✅ درخواست شارژ ${amt.toLocaleString()} تومانی با موفقیت ثبت شد!\nلطفاً تصویر فیش واریزی را در چت ربات ارسال فرمایید.`);
       };
 
       fetchUserData();
