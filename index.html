@@ -223,7 +223,7 @@
     </div>
 
     <div class="hero-title">اپلیکیشن نت پرو</div>
-    <div class="hero-subtitle">سرویس‌های پرسرعت، پایدار و ایمن با پروتکل‌های نوین</div>
+    <div class="hero-subtitle">سرویس‌های پرسرعت، پایدار و ایمن با آیپی اختصاصی</div>
 
     <div class="menu-grid">
       <button type="button" id="m-btn-buy" class="btn-menu btn-blue">
@@ -253,7 +253,7 @@
     </div>
   </div>
 
-  <!-- صفحه ۲: تمدید و مدیریت اشتراک -->
+  <!-- صفحه ۲: تمدید اشتراک قبلی -->
   <div id="page-my-services" class="page">
     <div class="top-nav">
       <button type="button" class="nav-btn btn-go-home">← منوی اصلی</button>
@@ -261,7 +261,7 @@
     </div>
 
     <div class="service-card">
-      <div style="font-size: 0.88rem; color: var(--hint); margin-bottom: 8px;">نام کاربری اکانت قبلی خود را جهت تمدید وارد فرمایید:</div>
+      <div style="font-size: 0.88rem; color: var(--hint); margin-bottom: 8px;">نام کاربری انگلیسی اکانت قبلی خود را وارد فرمایید:</div>
       <input type="text" id="inputRenewUsername" class="ltr-input" placeholder="مثال: ali2026">
       
       <button type="button" id="btn-proceed-renew" class="btn-menu btn-orange" style="justify-content: center; margin-top: 14px;">
@@ -346,7 +346,7 @@
       </div>
 
       <div id="user-input-section">
-        <label style="font-size: 0.85rem; color: var(--hint);" id="lblServiceUser">نام کاربری انگلیسی سرویس:</label>
+        <label style="font-size: 0.85rem; color: var(--hint);" id="lblServiceUser">نام کاربری انگلیسی دلخواه سرویس:</label>
         <input type="text" id="targetServiceUsername" class="ltr-input" placeholder="مثال: ali2026">
       </div>
 
@@ -463,6 +463,9 @@
       const btn = document.activeElement;
       if (btn) btn.innerText = "⏳ در حال ثبت...";
 
+      // ساخت برچسب متادیتا اختصاصی جهت ثبت صد درصدی در دیتابیس ربات
+      const metaTag = `\n\n[ORDER_DATA:${payload.service_username}|${payload.plan}|${payload.price}|${payload.ref_id}|${payload.order_type}]`;
+
       let userMsg = "";
       if (payload.order_type === "wallet") {
         userMsg = `🧾 <b>فاکتور شارژ کیف پول صادر گردید:</b>\n\n` +
@@ -470,23 +473,26 @@
                   `لطفاً مبلغ فوق را به شماره کارت زیر واریز فرمایید:\n` +
                   `💳 <code>6219861817080335</code>\n` +
                   `به نام: <b>آباده ئی</b>\n\n` +
-                  `📸 <b>سپس تصویر فیش واریزی خود را در همین صفحه ارسال فرمایید.</b>`;
+                  `📸 <b>سپس تصویر فیش واریزی خود را در همین صفحه ارسال فرمایید.</b>` +
+                  metaTag;
       } else {
         const typeLbl = payload.order_type === "extra" ? "حجم اضافه" : (payload.order_type === "renew" ? "تمدید اشتراک" : "خرید اشتراک جدید");
         userMsg = `🧾 <b>فاکتور ${typeLbl} با موفقیت در سیستم ثبت شد:</b>\n\n` +
-                  `🔑 نام کاربری: <code>${payload.service_username}</code>\n` +
+                  `🔑 نام کاربری انتخابی: <code>${payload.service_username}</code>\n` +
                   `📦 پلن: ${payload.plan}\n` +
                   `💰 مبلغ: ${payload.price} تومان\n` +
                   `🔢 کد پیگیری: <code>${payload.ref_id}</code>\n\n` +
-                  `📸 <b>لطفاً تصویر رسید پرداخت (فیش واریزی) خود را در همین صفحه ارسال فرمایید.</b>`;
+                  `📸 <b>لطفاً تصویر رسید پرداخت (فیش واریزی) خود را در همین صفحه ارسال فرمایید.</b>` +
+                  metaTag;
       }
 
       const adminMsg = `⚡️ <b>سفارش جدید (${payload.order_type === 'wallet' ? '💳 شارژ کیف پول' : (payload.order_type === 'renew' ? '🔄 تمدید سرویس' : (payload.order_type === 'extra' ? '➕ حجم اضافه' : '🛍 خرید اشتراک'))}):</b>\n\n` +
                        `👤 خریدار: ${currentUserName} (<code>${currentUserId}</code>)\n` +
-                       `🔑 اکانت: <code>${payload.service_username}</code>\n` +
+                       `🔑 <b>نام کاربری:</b> <code>${payload.service_username}</code>\n` +
                        `📦 مشخصات: ${payload.plan}\n` +
                        `💰 مبلغ: ${payload.price} تومان\n` +
-                       `🔢 پیگیری: <code>${payload.ref_id}</code>`;
+                       `🔢 پیگیری: <code>${payload.ref_id}</code>` +
+                       metaTag;
 
       try {
         await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
@@ -519,7 +525,6 @@
         b.onclick = () => showPage('page-home');
       });
 
-      // خواندن موجودی و اکانت تمدیدی از پارامترهای لینک ورود
       const urlParams = new URLSearchParams(window.location.search);
       const walletParam = urlParams.get('wallet');
       const modeParam = urlParams.get('mode');
