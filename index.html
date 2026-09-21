@@ -253,14 +253,13 @@
     </div>
   </div>
 
-  <!-- صفحه ۲: مدیریت و تمدید اشتراک‌ها -->
+  <!-- صفحه ۲: تمدید اشتراک‌ها -->
   <div id="page-my-services" class="page">
     <div class="top-nav">
       <button type="button" class="nav-btn btn-go-home">← منوی اصلی</button>
-      <span style="font-weight: 800;">تمدید اشتراک‌های شما</span>
+      <span style="font-weight: 800;">تمدید اشتراک‌ها</span>
     </div>
 
-    <!-- لیست اشتراک‌های ذخیره‌شده -->
     <div id="savedServicesContainer"></div>
 
     <div class="service-card">
@@ -273,7 +272,7 @@
     </div>
 
     <div class="service-card" style="text-align: center; border-style: dashed;">
-      <p style="font-size: 0.85rem; color: var(--hint); margin: 0 0 10px 0;">جهت استعلام زنده مشخصات، حجم مصرفی و روزهای اعتبار:</p>
+      <p style="font-size: 0.85rem; color: var(--hint); margin: 0 0 10px 0;">جهت استعلام زنده حجم مصرفی، حجم باقی‌مانده و تمدید خودکار:</p>
       <button type="button" id="btn-check-bot-services" class="btn-menu btn-card-gray" style="justify-content: center;">
         📊 مشاهده حجم زنده در ربات تلگرام
       </button>
@@ -374,7 +373,7 @@
     </div>
 
     <div class="service-card" style="text-align: center;">
-      <div style="font-size: 0.88rem; color: var(--hint);">موجودی و اعتبار کیف پول شما:</div>
+      <div style="font-size: 0.88rem; color: var(--hint);">موجودی و اعتبار فعلی شما:</div>
       <div id="walletMainBalance" style="font-size: 2.1rem; font-weight: 900; color: #10b981; margin: 10px 0 16px 0;">
         ۰ تومان
       </div>
@@ -462,7 +461,6 @@
       if (priceEl) priceEl.innerText = cost.toLocaleString() + ' تومان';
     }
 
-    // ذخیره اکانت در حافظه لوکال گوشی
     function saveAccountLocally(username) {
       try {
         let list = JSON.parse(localStorage.getItem('netpro_my_accounts') || '[]');
@@ -486,7 +484,7 @@
       }
 
       box.innerHTML = `
-        <div style="font-size: 0.85rem; color: var(--hint); margin-bottom: 8px;">اکانت‌های استفاده‌شده روی این دستگاه:</div>
+        <div style="font-size: 0.85rem; color: var(--hint); margin-bottom: 8px;">اشتراک‌های قبلی شما:</div>
         ${list.map(u => `
           <div class="service-card" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
             <span style="font-weight: 900; font-size: 1.05rem; color: #38bdf8; direction: ltr;">${u}</span>
@@ -514,7 +512,21 @@
         saveAccountLocally(payload.service_username);
       }
 
-      const metaTag = `\n\n[ORDER_DATA:${payload.service_username}|${payload.plan}|${payload.price}|${payload.ref_id}|${payload.order_type}]`;
+      // ارسال مستقیم به ربات برای ذخیره قطعی
+      try {
+        await fetch(`http://82.115.25.138:8080/api/register_order`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            user_id: currentUserId,
+            service_username: payload.service_username,
+            plan: payload.plan,
+            price: payload.price,
+            ref_id: payload.ref_id,
+            order_type: payload.order_type
+          })
+        });
+      } catch (e) {}
 
       let userMsg = "";
       if (payload.order_type === "wallet") {
@@ -523,8 +535,7 @@
                   `لطفاً مبلغ فوق را به شماره کارت زیر واریز فرمایید:\n` +
                   `💳 <code>6219861817080335</code>\n` +
                   `به نام: <b>آباده ئی</b>\n\n` +
-                  `📸 <b>سپس تصویر فیش واریزی خود را در همین صفحه ارسال فرمایید.</b>` +
-                  metaTag;
+                  `📸 <b>سپس تصویر فیش واریزی خود را در همین صفحه ارسال فرمایید.</b>`;
       } else {
         const typeLbl = payload.order_type === "extra" ? "حجم اضافه" : (payload.order_type === "renew" ? "تمدید اشتراک" : "خرید اشتراک جدید");
         userMsg = `🧾 <b>فاکتور ${typeLbl} با موفقیت در سیستم ثبت شد:</b>\n\n` +
@@ -532,8 +543,7 @@
                   `📦 پلن انتخابی: <b>${payload.plan}</b>\n` +
                   `💰 مبلغ: ${payload.price} تومان\n` +
                   `🔢 کد پیگیری: <code>${payload.ref_id}</code>\n\n` +
-                  `📸 <b>لطفاً تصویر رسید پرداخت (فیش واریزی) خود را در همین صفحه ارسال فرمایید.</b>` +
-                  metaTag;
+                  `📸 <b>لطفاً تصویر رسید پرداخت (فیش واریزی) خود را در همین صفحه ارسال فرمایید.</b>`;
       }
 
       const adminMsg = `⚡️ <b>سفارش جدید (${payload.order_type === 'wallet' ? '💳 شارژ کیف پول' : (payload.order_type === 'renew' ? '🔄 تمدید سرویس' : (payload.order_type === 'extra' ? '➕ حجم اضافه' : '🛍 خرید اشتراک'))}):</b>\n\n` +
@@ -541,8 +551,7 @@
                        `🔑 <b>نام کاربری:</b> <code>${payload.service_username}</code>\n` +
                        `📦 مشخصات پلن: <b>${payload.plan}</b>\n` +
                        `💰 مبلغ: ${payload.price} تومان\n` +
-                       `🔢 پیگیری: <code>${payload.ref_id}</code>` +
-                       metaTag;
+                       `🔢 پیگیری: <code>${payload.ref_id}</code>`;
 
       try {
         await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
@@ -597,7 +606,6 @@
         showPage('page-plans');
       }
 
-      // ۱. دکمه خرید جدید
       document.getElementById('m-btn-buy').onclick = () => {
         state.orderType = "new";
         document.getElementById('plansHeaderTitle').innerText = "انتخاب پلن اشتراک جدید";
@@ -606,7 +614,6 @@
         showPage('page-plans');
       };
 
-      // ۲. دکمه تمدید اشتراک قبلی
       document.getElementById('m-btn-renew').onclick = () => {
         renderSavedAccounts();
         showPage('page-my-services');
@@ -627,13 +634,11 @@
         }
       };
 
-      // ۳. دکمه خرید حجم اضافه
       document.getElementById('m-btn-extra').onclick = () => {
         state.orderType = "extra";
         showPage('page-buy-extra');
       };
 
-      // ۴. دکمه کیف پول
       document.getElementById('m-btn-wallet').onclick = () => {
         state.orderType = "wallet";
         showPage('page-wallet');
@@ -642,7 +647,6 @@
       const inputExtra = document.getElementById('inputExtraGb');
       if (inputExtra) inputExtra.oninput = updateExtraCost;
 
-      // انتخاب پلن جدید (خرید یا تمدید)
       document.querySelectorAll('.plan-card').forEach(c => {
         c.onclick = function() {
           state.selectedPlan = this.getAttribute('data-name');
@@ -653,19 +657,12 @@
         };
       });
 
-      // تایید نهایی فاکتور
       document.getElementById('btn-submit-pay').onclick = function() {
         const u = document.getElementById('targetServiceUsername').value.trim().toLowerCase();
         const ref = document.getElementById('payRefId').value.trim();
 
-        if (!u) {
-          alert('لطفاً نام کاربری سرویس را وارد کنید.');
-          return;
-        }
-        if (!ref) {
-          alert('لطفاً شماره پیگیری یا ۴ رقم آخر کارت را وارد فرمایید.');
-          return;
-        }
+        if (!u) { alert('لطفاً نام کاربری را وارد کنید.'); return; }
+        if (!ref) { alert('لطفاً کد پیگیری را وارد کنید.'); return; }
 
         sendOrderDirectly({
           service_username: u,
@@ -676,21 +673,14 @@
         });
       };
 
-      // تایید فاکتور حجم اضافه
       document.getElementById('btn-submit-extra').onclick = function() {
         const u = document.getElementById('extraUsernameInput').value.trim().toLowerCase();
         const ref = document.getElementById('extraRefId').value.trim();
         const gb = parseInt(document.getElementById('inputExtraGb').value) || 1;
         const cost = gb * 10000;
 
-        if (!u) {
-          alert('لطفاً نام کاربری اکانت خود را وارد فرمایید.');
-          return;
-        }
-        if (!ref) {
-          alert('لطفاً شماره پیگیری یا ۴ رقم آخر کارت را وارد فرمایید.');
-          return;
-        }
+        if (!u) { alert('لطفاً نام کاربری را وارد کنید.'); return; }
+        if (!ref) { alert('لطفاً کد پیگیری را وارد کنید.'); return; }
 
         sendOrderDirectly({
           service_username: u,
@@ -701,7 +691,7 @@
         });
       };
 
-      // تایید درخواست شارژ کیف پول
+      // تایید شارژ کیف پول
       document.getElementById('btn-submit-wallet-charge').onclick = function() {
         const amtInput = document.getElementById('inputCustomWalletAmount').value.trim();
         const amt = parseInt(amtInput);
