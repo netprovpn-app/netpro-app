@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>اپلیکیشن نت پرو</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <!-- فونت استاندارد Vazirmatn / Yekan -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -55,6 +56,7 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
+    /* هدر و عناوین */
     .hero-title {
       font-size: 1.55rem;
       font-weight: 900;
@@ -75,6 +77,7 @@
       line-height: 1.6;
     }
 
+    /* کارت ویژگی‌ها */
     .features-card {
       background: var(--card-bg);
       backdrop-filter: blur(12px);
@@ -124,6 +127,7 @@
       flex-shrink: 0;
     }
 
+    /* دکمه‌های ۳ بعدی شیک */
     .main-actions {
       display: flex;
       flex-direction: column;
@@ -179,6 +183,7 @@
       box-shadow: 0 2px 0 var(--orange-dark), 0 6px 12px rgba(245, 158, 11, 0.25);
     }
 
+    /* نوار بالا و دکمه‌های ناوبری */
     .top-bar-nav {
       display: flex;
       justify-content: space-between;
@@ -195,6 +200,11 @@
       font-size: 0.82rem;
       font-weight: 600;
       cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .nav-btn:hover {
+      color: #ffffff;
+      border-color: rgba(255, 255, 255, 0.3);
     }
 
     .support-btn-box {
@@ -227,6 +237,7 @@
       color: #ffffff;
     }
 
+    /* گرید پلن‌ها */
     .plans-grid {
       display: flex;
       flex-direction: column;
@@ -270,6 +281,7 @@
       border: 1px solid rgba(16, 185, 129, 0.35);
     }
 
+    /* باکس پرداخت */
     .payment-box {
       background: var(--card-bg);
       backdrop-filter: blur(12px);
@@ -313,6 +325,9 @@
       font-size: 0.98rem;
       margin-top: 8px;
       outline: none;
+    }
+    input[type="text"]:focus {
+      border-color: var(--cyan-accent);
     }
 
     .ltr-input {
@@ -360,7 +375,7 @@
 </head>
 <body>
 
-  <!-- صفحه ۱: خانه -->
+  <!-- صفحه ۱: صفحه اصلی -->
   <div id="page-home" class="page active">
     <div class="hero-title">به اپلیکیشن نت پرو خوش آمدید</div>
     <div class="hero-subtitle">سرویس‌های پرسرعت، پایدار و ایمن با آیپی اختصاصی</div>
@@ -369,8 +384,8 @@
       <div class="features-title">✨ مزایای ویژه اشتراک‌های نت پرو:</div>
       <ul class="feature-list">
         <li class="feature-item"><span class="feature-badge">✓</span> کاربری نامحدود بدون محدودیت دستگاه</li>
-        <li class="feature-item"><span class="feature-badge">✓</span> سرورهای پرسرعت با آیپی ثابت و اختصاصی</li>
-        <li class="feature-item"><span class="feature-badge">✓</span> کاملاً سازگار با ابزارهای هوش مصنوعی</li>
+        <li class="feature-item"><span class="feature-badge">✓</span> سرورهای متعدد پرسرعت با آیپی ثابت و اختصاصی</li>
+        <li class="feature-item"><span class="feature-badge">✓</span> سازگار با تمام ابزارهای هوش مصنوعی</li>
         <li class="feature-item"><span class="feature-badge">✓</span> اتصال پایدار حتی در شرایط محدودیت اینترنت</li>
       </ul>
     </div>
@@ -391,7 +406,7 @@
     </div>
   </div>
 
-  <!-- صفحه وارد کردن دستی نام کاربری برای تمدید -->
+  <!-- صفحه ۲: وارد کردن نام کاربری تمدید -->
   <div id="page-enter-renew-user" class="page">
     <div class="top-bar-nav">
       <button type="button" class="nav-btn btn-action-home">🏠 صفحه اصلی</button>
@@ -406,7 +421,7 @@
       </label>
       <input type="text" id="inputRenewUsername" class="ltr-input" placeholder="مثال: ali2026 یا mohammad">
       <div style="font-size: 0.78rem; color: var(--hint); margin-top: 8px; line-height: 1.5;">
-        * نام کاربری انگلیسی اشتراک خود را وارد فرمایید تا همان اکانت تمدید شود.
+        * نام کاربری انگلیسی اشتراک قبلی خود را وارد فرمایید تا همان اکانت تمدید گردد.
       </div>
 
       <button type="button" id="btn-confirm-renew-user" class="btn-3d-orange" style="margin-top: 20px;">
@@ -421,7 +436,7 @@
     </div>
   </div>
 
-  <!-- صفحه تعرفه‌ها -->
+  <!-- صفحه ۳: تعرفه‌ها -->
   <div id="page-plans" class="page">
     <div class="top-bar-nav">
       <button type="button" id="btn-back-plans" class="nav-btn">← بازگشت</button>
@@ -471,7 +486,7 @@
     </div>
   </div>
 
-  <!-- صفحه پرداخت و ثبت فاکتور -->
+  <!-- صفحه ۴: فاکتور و ثبت نهایی -->
   <div id="page-pay" class="page">
     <div class="top-bar-nav">
       <button type="button" id="btn-back-pay" class="nav-btn">← تغییر پلن</button>
@@ -515,7 +530,7 @@
       <input type="text" id="refId" placeholder="مثال: 987654321">
 
       <div class="step-hint">
-        💡 پس از زدن دکمه زیر، مشخصات ثبت شده و پیام درخواست تصویر فیش در صفحه چت تلگرام برای شما نمایش داده خواهد شد.
+        💡 پس از زدن دکمه زیر، مشخصات شما بلافاصله در سیستم ثبت می‌شود و می‌توانید عکس فیش را در چت تلگرام ارسال فرمایید.
       </div>
     </div>
 
@@ -525,8 +540,6 @@
   </div>
 
   <script>
-    const BOT_TOKEN = "8900507347:AAH6txJQxR11H_bGj1dLw2Etyc_xd6WHgxQ";
-    const ADMIN_ID = 100161863;
     const tg = window.Telegram ? window.Telegram.WebApp : null;
     if (tg) {
       try {
@@ -552,7 +565,6 @@
       window.scrollTo(0, 0);
     }
 
-    // خواندن پارامترهای لینک ارسالی از تلگرام
     const urlParams = new URLSearchParams(window.location.search);
     const modeParam = urlParams.get('mode');
     const userParam = urlParams.get('user');
@@ -562,7 +574,6 @@
         btn.onclick = () => showPage('page-home');
       });
 
-      // اگر کاربر از دکمه تمدید اکانت خاص در تلگرام کلیک کرده باشد
       if (modeParam === 'renew' && userParam) {
         orderType = "renew";
         renewChosenUser = userParam;
@@ -648,7 +659,8 @@
       document.getElementById('cardNum').onclick = copyCard;
       document.getElementById('copyTextHint').onclick = copyCard;
 
-      document.getElementById('btn-submit-order').onclick = async function() {
+      // ثبت نهایی سفارش با پروتکل رسمی و استاندارد تلگرام
+      document.getElementById('btn-submit-order').onclick = function() {
         let finalUsername = "";
         if (orderType === "renew") {
           finalUsername = renewChosenUser;
@@ -661,6 +673,12 @@
           return;
         }
 
+        const validRegex = /^[a-zA-Z0-9_\-\.]+$/;
+        if (!validRegex.test(finalUsername)) {
+          alert('نام کاربری فقط باید شامل حروف و ارقام انگلیسی باشد.');
+          return;
+        }
+
         const refInput = document.getElementById('refId');
         const refVal = refInput ? refInput.value.trim() : '';
 
@@ -669,64 +687,23 @@
           return;
         }
 
-        const btn = this;
-        btn.innerText = '⏳ در حال ثبت...';
-        btn.disabled = true;
-
-        const user = (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) ? tg.initDataUnsafe.user : null;
         const planName = selectedOrder.plan || "یکماهه ۲۰ گیگابایت";
-        const planPrice = selectedOrder.price || "۲۶۴,۰۰۰";
-        const typeLabel = orderType === "renew" ? "🔄 تمدید اشتراک" : "🛍 خرید اشتراک جدید";
+        const planPrice = selectedOrder.price || "264,000";
 
-        const customerMsg = 
-          `🧾 <b>فاکتور ${typeLabel} با موفقیت ثبت شد:</b>\n\n` +
-          `🔑 <b>نام کاربری سرویس:</b> <code>${finalUsername}</code>\n` +
-          `📦 <b>سرویس انتخابی:</b> ${planName}\n` +
-          `💰 <b>مبلغ پرداختی:</b> ${planPrice} تومان\n` +
-          `🔢 <b>شماره پیگیری / تراکنش:</b> <code>${refVal}</code>\n\n` +
-          "📸 <b>لطفاً تصویر رسید (فیش واریزی) خود را در همین صفحه ارسال فرمایید.</b>\n" +
-          "⏳ پس از بررسی رسید توسط پشتیبانی، سرویس فعال خواهد شد.";
+        const payload = {
+          service_username: finalUsername,
+          plan: planName,
+          price: planPrice,
+          ref_id: refVal,
+          order_type: orderType
+        };
 
-        const adminAlertMsg = 
-          `⚡️ <b>سفارش جدید ثبت شد (${typeLabel}):</b>\n\n` +
-          `👤 خریدار: ${user ? (user.first_name || '') + ' ' + (user.last_name || '') : 'ناشناس'} (@${user ? (user.username || 'ندارد') : '-'})\n` +
-          `🆔 شناسه: <code>${user ? user.id : '-'}</code>\n` +
-          `🔑 <b>نام کاربری انتخابی مشتری:</b> <code>${finalUsername}</code>\n` +
-          `📦 پلن: <b>${planName}</b>\n` +
-          `💰 مبلغ: ${planPrice} تومان\n` +
-          `🔢 پیگیری: <code>${refVal}</code>\n\n` +
-          "⏳ منتظر ارسال عکس فیش توسط کاربر...";
-
-        if (user && user.id) {
-          try {
-            // ۱. ثبت در ربات به صورت مستقیم
-            const internalSyncMsg = `ثبت_سفارش_سیستمی:${user.id}|${finalUsername}|${planName}|${planPrice}|${refVal}|${orderType}`;
-            await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ chat_id: ADMIN_ID, text: internalSyncMsg })
-            });
-
-            // ۲. ارسال پیام فاکتور به مشتری
-            await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ chat_id: user.id, text: customerMsg, parse_mode: 'HTML' })
-            });
-
-            // ۳. ارسال مشخصات کامل به ادمین همراه با نام کاربری
-            await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ chat_id: ADMIN_ID, text: adminAlertMsg, parse_mode: 'HTML' })
-            });
-          } catch (e) {
-            console.error(e);
-          }
-        }
-
-        if (tg && typeof tg.close === 'function') {
+        // ارسال داده به ربات از طریق Telegram WebApp API
+        if (tg && typeof tg.sendData === 'function') {
+          tg.sendData(JSON.stringify(payload));
           tg.close();
+        } else {
+          alert('سفارش شما با موفقیت ثبت شد. لطفاً در محیط تلگرام استفاده فرمایید.');
         }
       };
     });
