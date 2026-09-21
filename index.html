@@ -215,11 +215,11 @@
 </head>
 <body>
 
-  <!-- صفحه ۱: صفحه اصلی -->
+  <!-- صفحه ۱: منوی اصلی -->
   <div id="page-home" class="page active">
     <div class="user-badge-bar">
       <span>👤 <b id="user-display-name">کاربر نت پرو</b></span>
-      <span>💳 اعتبار کیف پول: <b id="top-wallet-display" style="color: #10b981;">۰</b> تومان</span>
+      <span>💳 کیف پول: <b id="top-wallet-display" style="color: #10b981;">۰</b> تومان</span>
     </div>
 
     <div class="hero-title">اپلیکیشن نت پرو</div>
@@ -253,26 +253,29 @@
     </div>
   </div>
 
-  <!-- صفحه ۲: تمدید اشتراک قبلی -->
+  <!-- صفحه ۲: مدیریت و تمدید اشتراک‌ها -->
   <div id="page-my-services" class="page">
     <div class="top-nav">
       <button type="button" class="nav-btn btn-go-home">← منوی اصلی</button>
-      <span style="font-weight: 800;">تمدید اشتراک قبلی</span>
+      <span style="font-weight: 800;">تمدید اشتراک‌های شما</span>
     </div>
 
+    <!-- لیست اشتراک‌های ذخیره‌شده -->
+    <div id="savedServicesContainer"></div>
+
     <div class="service-card">
-      <div style="font-size: 0.88rem; color: var(--hint); margin-bottom: 8px;">نام کاربری انگلیسی اکانت قبلی خود را وارد فرمایید:</div>
+      <div style="font-size: 0.85rem; color: var(--hint); margin-bottom: 6px;">تمدید با وارد کردن نام کاربری:</div>
       <input type="text" id="inputRenewUsername" class="ltr-input" placeholder="مثال: ali2026">
       
       <button type="button" id="btn-proceed-renew" class="btn-menu btn-orange" style="justify-content: center; margin-top: 14px;">
-        🔄 انتخاب پلن برای تمدید این اکانت
+        🔄 تایید و انتخاب پلن تمدید
       </button>
     </div>
 
     <div class="service-card" style="text-align: center; border-style: dashed;">
-      <p style="font-size: 0.85rem; color: var(--hint); margin: 0 0 10px 0;">جهت استعلام زنده حجم مصرفی، حجم باقی‌مانده و تمدید خودکار:</p>
+      <p style="font-size: 0.85rem; color: var(--hint); margin: 0 0 10px 0;">جهت استعلام زنده مشخصات، حجم مصرفی و روزهای اعتبار:</p>
       <button type="button" id="btn-check-bot-services" class="btn-menu btn-card-gray" style="justify-content: center;">
-        📊 مشاهده مشخصات لحظه‌ای در ربات
+        📊 مشاهده حجم زنده در ربات تلگرام
       </button>
     </div>
   </div>
@@ -332,7 +335,7 @@
     </div>
   </div>
 
-  <!-- صفحه ۵: فاکتور پرداخت و کارت به کارت -->
+  <!-- صفحه ۵: فاکتور تایید پرداخت -->
   <div id="page-pay" class="page">
     <div class="top-nav">
       <button type="button" class="nav-btn" onclick="showPage('page-plans')">← تغییر پلن</button>
@@ -346,7 +349,7 @@
       </div>
 
       <div id="user-input-section">
-        <label style="font-size: 0.85rem; color: var(--hint);" id="lblServiceUser">نام کاربری انگلیسی دلخواه سرویس:</label>
+        <label style="font-size: 0.85rem; color: var(--hint);" id="lblServiceUser">نام کاربری انگلیسی سرویس:</label>
         <input type="text" id="targetServiceUsername" class="ltr-input" placeholder="مثال: ali2026">
       </div>
 
@@ -363,7 +366,7 @@
     </div>
   </div>
 
-  <!-- صفحه ۶: کیف پول با نمایش موجودی زنده -->
+  <!-- صفحه ۶: کیف پول -->
   <div id="page-wallet" class="page">
     <div class="top-nav">
       <button type="button" class="nav-btn btn-go-home">🏠 صفحه اصلی</button>
@@ -459,11 +462,58 @@
       if (priceEl) priceEl.innerText = cost.toLocaleString() + ' تومان';
     }
 
+    // ذخیره اکانت در حافظه لوکال گوشی
+    function saveAccountLocally(username) {
+      try {
+        let list = JSON.parse(localStorage.getItem('netpro_my_accounts') || '[]');
+        if (!list.includes(username)) {
+          list.push(username);
+          localStorage.setItem('netpro_my_accounts', JSON.stringify(list));
+        }
+      } catch (e) {}
+    }
+
+    function renderSavedAccounts() {
+      const box = document.getElementById('savedServicesContainer');
+      let list = [];
+      try {
+        list = JSON.parse(localStorage.getItem('netpro_my_accounts') || '[]');
+      } catch (e) {}
+
+      if (list.length === 0) {
+        box.innerHTML = '';
+        return;
+      }
+
+      box.innerHTML = `
+        <div style="font-size: 0.85rem; color: var(--hint); margin-bottom: 8px;">اکانت‌های استفاده‌شده روی این دستگاه:</div>
+        ${list.map(u => `
+          <div class="service-card" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <span style="font-weight: 900; font-size: 1.05rem; color: #38bdf8; direction: ltr;">${u}</span>
+            <button type="button" class="btn-menu btn-orange" style="width: auto; padding: 8px 16px; font-size: 0.85rem;" onclick="startRenewForUser('${u}')">
+              🔄 تمدید این اکانت
+            </button>
+          </div>
+        `).join('')}
+      `;
+    }
+
+    function startRenewForUser(u) {
+      state.orderType = "renew";
+      document.getElementById('plansHeaderTitle').innerText = `انتخاب پلن تمدید (${u})`;
+      document.getElementById('lblServiceUser').innerText = "نام کاربری اشتراک تمدیدی:";
+      document.getElementById('targetServiceUsername').value = u;
+      showPage('page-plans');
+    }
+
     async function sendOrderDirectly(payload) {
       const btn = document.activeElement;
       if (btn) btn.innerText = "⏳ در حال ثبت...";
 
-      // ساخت برچسب متادیتا اختصاصی جهت ثبت صد درصدی در دیتابیس ربات
+      if (payload.order_type !== "wallet") {
+        saveAccountLocally(payload.service_username);
+      }
+
       const metaTag = `\n\n[ORDER_DATA:${payload.service_username}|${payload.plan}|${payload.price}|${payload.ref_id}|${payload.order_type}]`;
 
       let userMsg = "";
@@ -479,7 +529,7 @@
         const typeLbl = payload.order_type === "extra" ? "حجم اضافه" : (payload.order_type === "renew" ? "تمدید اشتراک" : "خرید اشتراک جدید");
         userMsg = `🧾 <b>فاکتور ${typeLbl} با موفقیت در سیستم ثبت شد:</b>\n\n` +
                   `🔑 نام کاربری انتخابی: <code>${payload.service_username}</code>\n` +
-                  `📦 پلن: ${payload.plan}\n` +
+                  `📦 پلن انتخابی: <b>${payload.plan}</b>\n` +
                   `💰 مبلغ: ${payload.price} تومان\n` +
                   `🔢 کد پیگیری: <code>${payload.ref_id}</code>\n\n` +
                   `📸 <b>لطفاً تصویر رسید پرداخت (فیش واریزی) خود را در همین صفحه ارسال فرمایید.</b>` +
@@ -489,7 +539,7 @@
       const adminMsg = `⚡️ <b>سفارش جدید (${payload.order_type === 'wallet' ? '💳 شارژ کیف پول' : (payload.order_type === 'renew' ? '🔄 تمدید سرویس' : (payload.order_type === 'extra' ? '➕ حجم اضافه' : '🛍 خرید اشتراک'))}):</b>\n\n` +
                        `👤 خریدار: ${currentUserName} (<code>${currentUserId}</code>)\n` +
                        `🔑 <b>نام کاربری:</b> <code>${payload.service_username}</code>\n` +
-                       `📦 مشخصات: ${payload.plan}\n` +
+                       `📦 مشخصات پلن: <b>${payload.plan}</b>\n` +
                        `💰 مبلغ: ${payload.price} تومان\n` +
                        `🔢 پیگیری: <code>${payload.ref_id}</code>` +
                        metaTag;
@@ -541,12 +591,13 @@
         document.getElementById('plansHeaderTitle').innerText = "انتخاب پلن تمدید اشتراک";
         document.getElementById('lblServiceUser').innerText = "نام کاربری اشتراک قبلی جهت تمدید:";
         if (userParam) {
+          saveAccountLocally(userParam);
           document.getElementById('targetServiceUsername').value = userParam;
         }
         showPage('page-plans');
       }
 
-      // ۱. دکمه خرید اشتراک جدید
+      // ۱. دکمه خرید جدید
       document.getElementById('m-btn-buy').onclick = () => {
         state.orderType = "new";
         document.getElementById('plansHeaderTitle').innerText = "انتخاب پلن اشتراک جدید";
@@ -557,17 +608,15 @@
 
       // ۲. دکمه تمدید اشتراک قبلی
       document.getElementById('m-btn-renew').onclick = () => {
+        renderSavedAccounts();
         showPage('page-my-services');
       };
 
       document.getElementById('btn-proceed-renew').onclick = () => {
         const u = document.getElementById('inputRenewUsername').value.trim().toLowerCase();
         if (!u) { alert('لطفاً نام کاربری را وارد کنید.'); return; }
-        state.orderType = "renew";
-        document.getElementById('plansHeaderTitle').innerText = `انتخاب پلن تمدید (${u})`;
-        document.getElementById('lblServiceUser').innerText = "نام کاربری اشتراک تمدیدی:";
-        document.getElementById('targetServiceUsername').value = u;
-        showPage('page-plans');
+        saveAccountLocally(u);
+        startRenewForUser(u);
       };
 
       document.getElementById('btn-check-bot-services').onclick = () => {
@@ -593,7 +642,7 @@
       const inputExtra = document.getElementById('inputExtraGb');
       if (inputExtra) inputExtra.oninput = updateExtraCost;
 
-      // انتخاب پلن‌های تعرفه
+      // انتخاب پلن جدید (خرید یا تمدید)
       document.querySelectorAll('.plan-card').forEach(c => {
         c.onclick = function() {
           state.selectedPlan = this.getAttribute('data-name');
@@ -604,7 +653,7 @@
         };
       });
 
-      // تایید نهایی فاکتور خرید یا تمدید
+      // تایید نهایی فاکتور
       document.getElementById('btn-submit-pay').onclick = function() {
         const u = document.getElementById('targetServiceUsername').value.trim().toLowerCase();
         const ref = document.getElementById('payRefId').value.trim();
