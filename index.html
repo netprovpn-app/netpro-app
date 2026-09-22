@@ -3,25 +3,18 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>اپلیکیشن نت پرو</title>
+  <title>NET PRO VPN</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;700;800;900&display=swap" rel="stylesheet">
   
   <style>
     :root {
-      --bg-dark: #090d16;
-      --card-bg: rgba(22, 30, 49, 0.85);
-      --card-border: rgba(56, 189, 248, 0.22);
-      --text: #f8fafc;
+      --bg: #070a12;
+      --card-bg: rgba(17, 24, 39, 0.75);
+      --text: #ffffff;
       --hint: #94a3b8;
-      --blue-main: #3b82f6;
-      --blue-dark: #1d4ed8;
-      --orange-main: #f59e0b;
-      --orange-dark: #b45309;
-      --green-accent: #10b981;
-      --cyan-accent: #38bdf8;
     }
 
     * {
@@ -32,20 +25,44 @@
     }
 
     body {
-      background: radial-gradient(circle at top, #111c35 0%, var(--bg-dark) 100%);
+      background: radial-gradient(circle at top, #111827 0%, var(--bg) 100%);
       color: var(--text);
       margin: 0;
       padding: 16px;
       direction: rtl;
       min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .header-bar {
+      text-align: center;
+      margin-top: 4px;
+      margin-bottom: 20px;
+    }
+
+    .brand-title {
+      font-size: 1.55rem;
+      font-weight: 900;
+      letter-spacing: 0.5px;
+      background: linear-gradient(135deg, #60a5fa 0%, #38bdf8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 4px;
+    }
+
+    .brand-sub {
+      font-size: 0.84rem;
+      color: var(--hint);
     }
 
     .page {
       display: none;
-      animation: fadeIn 0.2s ease-out;
+      animation: fadeIn 0.22s ease-out;
+      width: 100%;
     }
     .page.active {
-      display: block !important;
+      display: block;
     }
 
     @keyframes fadeIn {
@@ -53,357 +70,189 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
-    .hero-title {
-      font-size: 1.45rem;
-      font-weight: 900;
-      text-align: center;
-      margin-top: 6px;
-      margin-bottom: 6px;
-      background: linear-gradient(135deg, #60a5fa, #38bdf8);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    .hero-subtitle {
-      font-size: 0.88rem;
-      text-align: center;
-      margin-bottom: 18px;
-      color: var(--hint);
-      line-height: 1.5;
-    }
-
-    .user-badge-bar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      padding: 10px 16px;
-      border-radius: 14px;
-      margin-bottom: 18px;
-      font-size: 0.88rem;
-    }
-
-    .menu-grid {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      margin-bottom: 24px;
-    }
-
-    .btn-menu {
+    /* استایل دکمه‌های با پس‌زمینه رنگی واقعی */
+    .color-btn {
       width: 100%;
-      padding: 15px;
-      border-radius: 16px;
-      font-size: 0.98rem;
-      font-weight: 800;
       border: none;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      color: #fff;
-      transition: all 0.12s ease;
-    }
-    .btn-menu:active { transform: translateY(3px); }
-
-    .btn-blue {
-      background: linear-gradient(180deg, #3b82f6 0%, #2563eb 100%);
-      box-shadow: 0 5px 0 #1d4ed8, 0 10px 20px rgba(37, 99, 235, 0.35);
-    }
-    .btn-orange {
-      background: linear-gradient(180deg, #f59e0b 0%, #d97706 100%);
-      box-shadow: 0 5px 0 #b45309, 0 10px 20px rgba(245, 158, 11, 0.35);
-    }
-    .btn-card-gray {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      box-shadow: 0 5px 0 rgba(0,0,0,0.4);
-    }
-
-    .service-card {
-      background: var(--card-bg);
-      border-radius: 18px;
-      padding: 16px;
-      border: 1px solid var(--card-border);
-      margin-bottom: 16px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-    }
-
-    .plan-card {
-      width: 100%;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 14px 16px;
-      background: var(--card-bg);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 14px;
-      color: var(--text);
-      cursor: pointer;
-      margin-bottom: 10px;
-      box-shadow: 0 4px 0 rgba(0,0,0,0.3);
-      transition: transform 0.1s ease;
-    }
-    .plan-card:active { transform: translateY(2px); }
-
-    .plan-price-tag {
-      background: rgba(16, 185, 129, 0.15);
-      color: var(--green-accent);
-      padding: 6px 12px;
-      border-radius: 8px;
+      border-radius: 16px;
+      padding: 16px 20px;
+      margin-bottom: 14px;
+      font-size: 1rem;
       font-weight: 800;
-      font-size: 0.88rem;
-      border: 1px solid rgba(16, 185, 129, 0.3);
-    }
-
-    .card-display {
-      direction: ltr;
-      font-size: 1.25rem;
-      font-weight: 900;
-      text-align: center;
-      background: rgba(0, 0, 0, 0.35);
-      padding: 12px;
-      border-radius: 12px;
-      margin: 10px 0 6px 0;
-      color: #38bdf8;
-      letter-spacing: 2px;
-      border: 1px dashed rgba(56, 189, 248, 0.4);
-      cursor: pointer;
-    }
-
-    input[type="text"], input[type="number"] {
-      width: 100%;
-      padding: 13px;
-      border-radius: 12px;
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      background: rgba(0, 0, 0, 0.35);
       color: #ffffff;
-      font-size: 0.95rem;
-      margin-top: 8px;
-      outline: none;
-    }
-    input[type="text"]:focus, input[type="number"]:focus {
-      border-color: var(--cyan-accent);
-    }
-
-    .ltr-input {
-      direction: ltr;
-      text-align: left;
-      font-family: monospace;
-      font-size: 1.05rem !important;
-      font-weight: bold;
-    }
-
-    .nav-btn {
-      background: rgba(255, 255, 255, 0.06);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      color: var(--hint);
-      border-radius: 10px;
-      padding: 7px 12px;
-      font-size: 0.82rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
       cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.15s ease;
+    }
+    .color-btn:active {
+      transform: scale(0.97);
+    }
+
+    /* رنگ‌های منوی اصلی */
+    .btn-green {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      box-shadow: 0 4px 18px rgba(16, 185, 129, 0.42);
+      border: 1px solid rgba(16, 185, 129, 0.6);
+    }
+
+    .btn-lightblue {
+      background: linear-gradient(135deg, #38bdf8 0%, #0284c7 100%);
+      box-shadow: 0 4px 18px rgba(56, 189, 248, 0.42);
+      border: 1px solid rgba(56, 189, 248, 0.6);
+    }
+
+    .btn-orange {
+      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+      box-shadow: 0 4px 18px rgba(245, 158, 11, 0.42);
+      border: 1px solid rgba(245, 158, 11, 0.6);
+    }
+
+    .btn-lightred {
+      background: linear-gradient(135deg, #f87171 0%, #dc2626 100%);
+      box-shadow: 0 4px 18px rgba(248, 113, 113, 0.42);
+      border: 1px solid rgba(248, 113, 113, 0.6);
+    }
+
+    /* رنگ‌بندی پلن‌ها */
+    .plan-blue {
+      background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+      border: 1px solid rgba(96, 165, 250, 0.4);
+    }
+
+    .plan-green {
+      background: linear-gradient(135deg, #10b981 0%, #047857 100%);
+      box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);
+      border: 1px solid rgba(52, 211, 153, 0.4);
+    }
+
+    .plan-orange {
+      background: linear-gradient(135deg, #ea580c 0%, #c2410c 100%);
+      box-shadow: 0 4px 14px rgba(234, 88, 12, 0.35);
+      border: 1px solid rgba(251, 146, 60, 0.4);
+    }
+
+    .plan-red {
+      background: linear-gradient(135deg, #e11d48 0%, #be123c 100%);
+      box-shadow: 0 4px 14px rgba(225, 29, 72, 0.35);
+      border: 1px solid rgba(251, 113, 133, 0.4);
+    }
+
+    .price-pill {
+      background: rgba(0, 0, 0, 0.28);
+      padding: 6px 12px;
+      border-radius: 10px;
+      font-size: 0.88rem;
+      font-weight: 900;
+      border: 1px solid rgba(255, 255, 255, 0.2);
     }
 
     .top-nav {
       display: flex;
-      justify-content: space-between;
       align-items: center;
+      justify-content: space-between;
       margin-bottom: 16px;
+    }
+
+    .nav-back {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #fff;
+      padding: 7px 14px;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      cursor: pointer;
     }
   </style>
 </head>
 <body>
 
-  <!-- صفحه ۱: منوی اصلی -->
+  <!-- هدر برند نت پرو -->
+  <div class="header-bar">
+    <div class="brand-title">NET PRO VPN</div>
+    <div class="brand-sub">سرویس‌های اختصاصی، سریع و پایدار</div>
+  </div>
+
+  <!-- صفحه اول: منوی اصلی ۴ رنگ -->
   <div id="page-home" class="page active">
-    <div class="user-badge-bar">
-      <span>👤 <b id="user-display-name">کاربر نت پرو</b></span>
-      <span>💳 کیف پول: <b id="top-wallet-display" style="color: #10b981;">۰</b> تومان</span>
-    </div>
+    <!-- ۱. دکمه خرید اشتراک جدید (سبز) -->
+    <button type="button" class="color-btn btn-green" onclick="showPlans('new')">
+      <span>🛍 خرید اشتراک جدید</span>
+      <span>←</span>
+    </button>
 
-    <div class="hero-title">اپلیکیشن نت پرو</div>
-    <div class="hero-subtitle">سرویس‌های پرسرعت، پایدار و ایمن با آیپی اختصاصی</div>
+    <!-- ۲. دکمه تمدید اشتراک (آبی کم‌رنگ) -->
+    <button type="button" class="color-btn btn-lightblue" onclick="chooseAction('renew')">
+      <span>🔄 تمدید اشتراک قبلی</span>
+      <span>←</span>
+    </button>
 
-    <div class="menu-grid">
-      <button type="button" id="m-btn-buy" class="btn-menu btn-blue">
-        <span>🛍 خرید اشتراک جدید</span>
-        <span>←</span>
-      </button>
+    <!-- ۳. دکمه شارژ کیف پول (نارنجی) -->
+    <button type="button" class="color-btn btn-orange" onclick="chooseAction('wallet')">
+      <span>💳 شارژ کیف پول</span>
+      <span>💰</span>
+    </button>
 
-      <button type="button" id="m-btn-renew" class="btn-menu btn-orange">
-        <span>🔄 تمدید اشتراک قبلی</span>
-        <span>←</span>
-      </button>
-
-      <button type="button" id="m-btn-extra" class="btn-menu btn-card-gray">
-        <span>➕ خرید حجم اضافه (هر گیگ ۱۰ تومان)</span>
-        <span style="color: #38bdf8;">⚡️</span>
-      </button>
-
-      <button type="button" id="m-btn-wallet" class="btn-menu btn-card-gray">
-        <span>💳 کیف پول + شارژ حساب</span>
-        <span style="color: #10b981;">💰</span>
-      </button>
-
-      <a href="https://t.me/netpro_sup" class="btn-menu btn-card-gray" style="text-decoration: none;">
-        <span>💬 ارتباط با پشتیبانی تلگرام</span>
-        <span>@netpro_sup</span>
-      </a>
-    </div>
+    <!-- ۴. دکمه حجم اضافه (قرمز ملایم) -->
+    <button type="button" class="color-btn btn-lightred" onclick="chooseAction('extra')">
+      <span>➕ خرید حجم اضافه</span>
+      <span>⚡️</span>
+    </button>
   </div>
 
-  <!-- صفحه ۲: تمدید اشتراک‌ها -->
-  <div id="page-my-services" class="page">
-    <div class="top-nav">
-      <button type="button" class="nav-btn btn-go-home">← منوی اصلی</button>
-      <span style="font-weight: 800;">تمدید اشتراک‌ها</span>
-    </div>
-
-    <div id="savedServicesContainer"></div>
-
-    <div class="service-card">
-      <div style="font-size: 0.85rem; color: var(--hint); margin-bottom: 6px;">تمدید با وارد کردن نام کاربری:</div>
-      <input type="text" id="inputRenewUsername" class="ltr-input" placeholder="مثال: ali2026">
-      
-      <button type="button" id="btn-proceed-renew" class="btn-menu btn-orange" style="justify-content: center; margin-top: 14px;">
-        🔄 تایید و انتخاب پلن تمدید
-      </button>
-    </div>
-
-    <div class="service-card" style="text-align: center; border-style: dashed;">
-      <p style="font-size: 0.85rem; color: var(--hint); margin: 0 0 10px 0;">جهت استعلام زنده حجم مصرفی، حجم باقی‌مانده و تمدید خودکار:</p>
-      <button type="button" id="btn-check-bot-services" class="btn-menu btn-card-gray" style="justify-content: center;">
-        📊 مشاهده حجم زنده در ربات تلگرام
-      </button>
-    </div>
-  </div>
-
-  <!-- صفحه ۳: خرید حجم اضافه دلخواه -->
-  <div id="page-buy-extra" class="page">
-    <div class="top-nav">
-      <button type="button" class="nav-btn btn-go-home">← منوی اصلی</button>
-      <span style="font-weight: 800;">خرید حجم اضافه</span>
-    </div>
-
-    <div class="service-card">
-      <label style="font-size: 0.88rem; color: var(--hint);">نام کاربری انگلیسی اکانت شما:</label>
-      <input type="text" id="extraUsernameInput" class="ltr-input" placeholder="مثال: ali2026">
-
-      <div style="background: rgba(56, 189, 248, 0.1); padding: 10px; border-radius: 10px; font-size: 0.85rem; color: #93c5fd; margin: 14px 0;">
-        💡 نرخ مصوب: هر ۱ گیگابایت اضافه = <b>۱۰,۰۰۰ تومان</b>
-      </div>
-
-      <label style="font-size: 0.85rem; color: var(--hint);">حجم مورد نیاز (گیگابایت):</label>
-      <input type="number" id="inputExtraGb" min="1" max="500" value="5" style="direction: ltr; text-align: center; font-size: 1.2rem; font-weight: 800;">
-
-      <div style="display: flex; justify-content: space-between; align-items: center; margin: 16px 0;">
-        <span style="color: var(--hint);">مبلغ کل فاکتور:</span>
-        <span id="extra-total-price" style="font-size: 1.15rem; font-weight: 900; color: #10b981;">۵۰,۰۰۰ تومان</span>
-      </div>
-
-      <div style="font-size: 0.82rem; color: var(--hint);">شماره کارت جهت واریز مبلغ:</div>
-      <div class="card-display" onclick="copyCard()">6219 8618 1708 0335</div>
-      <div style="text-align: center; font-size: 0.78rem; color: var(--hint); margin-bottom: 12px;">آباده ئی (کلیک برای کپی)</div>
-
-      <label style="font-size: 0.85rem; color: var(--hint);">شماره پیگیری یا ۴ رقم آخر کارت:</label>
-      <input type="text" id="extraRefId" placeholder="مثال: 987654">
-
-      <button type="button" id="btn-submit-extra" class="btn-menu btn-blue" style="justify-content: center; margin-top: 16px;">
-        ✅ ثبت فاکتور حجم اضافه
-      </button>
-    </div>
-  </div>
-
-  <!-- صفحه ۴: تعرفه‌ها و پلن‌ها -->
+  <!-- صفحه دوم: پلن‌های رنگ‌بندی‌شده -->
   <div id="page-plans" class="page">
     <div class="top-nav">
-      <button type="button" class="nav-btn btn-go-home">← منوی اصلی</button>
-      <span style="font-weight: 800;" id="plansHeaderTitle">انتخاب پلن اشتراک</span>
+      <button type="button" class="nav-back" onclick="showHome()">← بازگشت</button>
+      <span style="font-weight: 800; font-size: 0.95rem;">انتخاب تعرفه و پلن</span>
     </div>
 
-    <div class="plans-grid">
-      <div class="plan-card" data-name="یکماهه ۱۰ گیگابایت" data-price="137,000"><span>یکماهه ۱۰ گیگابایت</span><span class="plan-price-tag">۱۳۷,۰۰۰ تومان</span></div>
-      <div class="plan-card" data-name="یکماهه ۲۰ گیگابایت" data-price="264,000"><span>یکماهه ۲۰ گیگابایت</span><span class="plan-price-tag">۲۶۴,۰۰۰ تومان</span></div>
-      <div class="plan-card" data-name="یکماهه ۳۰ گیگابایت" data-price="384,000"><span>یکماهه ۳۰ گیگابایت</span><span class="plan-price-tag">۳۸۴,۰۰۰ تومان</span></div>
-      <div class="plan-card" data-name="یکماهه ۵۰ گیگابایت" data-price="554,000"><span>یکماهه ۵۰ گیگابایت</span><span class="plan-price-tag">۵۵۴,۰۰۰ تومان</span></div>
-      <div class="plan-card" data-name="یکماهه ۷۵ گیگابایت" data-price="814,000"><span>یکماهه ۷۵ گیگابایت</span><span class="plan-price-tag">۸۱۴,۰۰۰ تومان</span></div>
-      <div class="plan-card" data-name="یکماهه ۱۰۰ گیگابایت" data-price="1,000,000"><span>یکماهه ۱۰۰ گیگابایت</span><span class="plan-price-tag">۱,۰۰۰,۰۰۰ تومان</span></div>
-      <div class="plan-card" data-name="یکماهه ۱۵۰ گیگابایت" data-price="1,484,000"><span>یکماهه ۱۵۰ گیگابایت</span><span class="plan-price-tag">۱,۴۸۴,۰۰۰ تومان</span></div>
-      <div class="plan-card" data-name="یکماهه ۲۰۰ گیگابایت" data-price="1,854,000"><span>یکماهه ۲۰۰ گیگابایت</span><span class="plan-price-tag">۱,۸۵۴,۰۰۰ تومان</span></div>
-    </div>
-  </div>
+    <!-- دو پلن اول: آبی -->
+    <button type="button" class="color-btn plan-blue" onclick="selectPlan(0)">
+      <span>یکماهه ۱۰ گیگابایت</span>
+      <span class="price-pill">۱۳۷,۰۰۰ تومان</span>
+    </button>
+    <button type="button" class="color-btn plan-blue" onclick="selectPlan(1)">
+      <span>یکماهه ۲۰ گیگابایت</span>
+      <span class="price-pill">۲۶۴,۰۰۰ تومان</span>
+    </button>
 
-  <!-- صفحه ۵: فاکتور تایید پرداخت -->
-  <div id="page-pay" class="page">
-    <div class="top-nav">
-      <button type="button" class="nav-btn" onclick="showPage('page-plans')">← تغییر پلن</button>
-      <button type="button" class="nav-btn btn-go-home">🏠 صفحه اصلی</button>
-    </div>
+    <!-- دو پلن دوم: سبز -->
+    <button type="button" class="color-btn plan-green" onclick="selectPlan(2)">
+      <span>یکماهه ۳۰ گیگابایت</span>
+      <span class="price-pill">۳۸۴,۰۰۰ تومان</span>
+    </button>
+    <button type="button" class="color-btn plan-green" onclick="selectPlan(3)">
+      <span>یکماهه ۵۰ گیگابایت</span>
+      <span class="price-pill">۵۵۴,۰۰۰ تومان</span>
+    </button>
 
-    <div class="service-card">
-      <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
-        <span id="pay-plan-name" style="font-weight: 800;">-</span>
-        <span id="pay-plan-price" style="font-weight: 800; color: #10b981;">-</span>
-      </div>
+    <!-- دو پلن سوم: نارنجی -->
+    <button type="button" class="color-btn plan-orange" onclick="selectPlan(4)">
+      <span>یکماهه ۷۵ گیگابایت</span>
+      <span class="price-pill">۸۱۴,۰۰۰ تومان</span>
+    </button>
+    <button type="button" class="color-btn plan-orange" onclick="selectPlan(5)">
+      <span>یکماهه ۱۰۰ گیگابایت</span>
+      <span class="price-pill">۱,۰۰۰,۰۰۰ تومان</span>
+    </button>
 
-      <div id="user-input-section">
-        <label style="font-size: 0.85rem; color: var(--hint);" id="lblServiceUser">نام کاربری انگلیسی سرویس:</label>
-        <input type="text" id="targetServiceUsername" class="ltr-input" placeholder="مثال: ali2026">
-      </div>
-
-      <div style="font-size: 0.85rem; color: var(--hint); margin-top: 14px;">شماره کارت جهت واریز:</div>
-      <div class="card-display" onclick="copyCard()">6219 8618 1708 0335</div>
-      <div style="text-align: center; font-size: 0.82rem; color: var(--hint); margin-bottom: 12px;">به نام: آباده ئی (کلیک برای کپی)</div>
-
-      <label style="font-size: 0.85rem; color: var(--hint);">شماره پیگیری یا ۴ رقم آخر کارت:</label>
-      <input type="text" id="payRefId" placeholder="مثال: 987654">
-
-      <button type="button" id="btn-submit-pay" class="btn-menu btn-blue" style="justify-content: center; margin-top: 20px;">
-        ✅ تایید و ثبت فاکتور
-      </button>
-    </div>
-  </div>
-
-  <!-- صفحه ۶: کیف پول -->
-  <div id="page-wallet" class="page">
-    <div class="top-nav">
-      <button type="button" class="nav-btn btn-go-home">🏠 صفحه اصلی</button>
-      <span style="font-weight: 800;">کیف پول نت پرو</span>
-    </div>
-
-    <div class="service-card" style="text-align: center;">
-      <div style="font-size: 0.88rem; color: var(--hint);">موجودی و اعتبار فعلی شما:</div>
-      <div id="walletMainBalance" style="font-size: 2.1rem; font-weight: 900; color: #10b981; margin: 10px 0 16px 0;">
-        ۰ تومان
-      </div>
-
-      <div style="text-align: right; background: rgba(255,255,255,0.04); padding: 14px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.08);">
-        <label style="font-size: 0.88rem; color: #38bdf8; font-weight: 800; display: block;">➕ افزایش اعتبار کیف پول:</label>
-        <span style="font-size: 0.78rem; color: var(--hint);">مبلغ مورد نظر خود را به تومان وارد فرمایید:</span>
-        <input type="number" id="inputCustomWalletAmount" placeholder="مثال: 50000" style="direction: ltr; text-align: center; font-size: 1.15rem; font-weight: 800; margin: 8px 0 12px 0;">
-
-        <div style="display: flex; gap: 6px; margin-bottom: 14px;">
-          <button type="button" class="nav-btn" style="flex: 1;" onclick="setWalletAmt(50000)">۵۰ هزار</button>
-          <button type="button" class="nav-btn" style="flex: 1;" onclick="setWalletAmt(100000)">۱۰۰ هزار</button>
-          <button type="button" class="nav-btn" style="flex: 1;" onclick="setWalletAmt(200000)">۲۰۰ هزار</button>
-        </div>
-
-        <div style="font-size: 0.82rem; color: var(--hint);">شماره کارت جهت واریز مبلغ:</div>
-        <div class="card-display" onclick="copyCard()">6219 8618 1708 0335</div>
-        <div style="text-align: center; font-size: 0.78rem; color: var(--hint); margin-bottom: 12px;">آباده ئی (کلیک برای کپی)</div>
-
-        <button type="button" id="btn-submit-wallet-charge" class="btn-menu btn-blue" style="justify-content: center;">
-          ✅ تایید مبلغ و ثبت درخواست شارژ
-        </button>
-      </div>
-    </div>
+    <!-- دو پلن چهارم: قرمز -->
+    <button type="button" class="color-btn plan-red" onclick="selectPlan(6)">
+      <span>یکماهه ۱۵۰ گیگابایت</span>
+      <span class="price-pill">۱,۴۸۴,۰۰۰ تومان</span>
+    </button>
+    <button type="button" class="color-btn plan-red" onclick="selectPlan(7)">
+      <span>یکماهه ۲۰۰ گیگابایت</span>
+      <span class="price-pill">۱,۸۵۴,۰۰۰ تومان</span>
+    </button>
   </div>
 
   <script>
-    const BOT_TOKEN = "8900507347:AAH6txJQxR11H_bGj1dLw2Etyc_xd6WHgxQ";
-    const ADMIN_ID = 100161863;
-
     const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
     if (tg) {
       try {
@@ -412,304 +261,33 @@
       } catch (e) {}
     }
 
-    let currentUserId = tg && tg.initDataUnsafe && tg.initDataUnsafe.user ? tg.initDataUnsafe.user.id : 100161863;
-    let currentUserName = tg && tg.initDataUnsafe && tg.initDataUnsafe.user ? tg.initDataUnsafe.user.first_name : "کاربر";
-
-    let state = {
-      orderType: "new",
-      selectedPlan: "یکماهه ۲۰ گیگابایت",
-      selectedPrice: "264,000",
-      walletBalance: 0
-    };
-
-    function showPage(id) {
-      document.querySelectorAll('.page').forEach(p => {
-        p.classList.remove('active');
-        p.style.display = 'none';
-      });
-      const el = document.getElementById(id);
-      if (el) {
-        el.classList.add('active');
-        el.style.display = 'block';
-      }
-      window.scrollTo(0, 0);
+    function showHome() {
+      document.getElementById('page-plans').classList.remove('active');
+      document.getElementById('page-home').classList.add('active');
     }
 
-    function setWalletAmt(val) {
-      const input = document.getElementById('inputCustomWalletAmount');
-      if (input) input.value = val;
+    function showPlans() {
+      document.getElementById('page-home').classList.remove('active');
+      document.getElementById('page-plans').classList.add('active');
     }
 
-    function copyCard() {
-      const c = "6219861817080335";
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(c).then(() => {
-          alert("شماره کارت کپی شد: " + c);
-        }).catch(() => {
-          prompt("شماره کارت را کپی کنید:", c);
-        });
+    // انتخاب پلن و انتقال خودکار به ربات
+    function selectPlan(planIndex) {
+      if (tg && typeof tg.sendData === 'function') {
+        tg.sendData("SELECT_PLAN_" + planIndex);
       } else {
-        prompt("شماره کارت را کپی کنید:", c);
+        alert("پلن انتخاب شد. به ربات مراجعه کنید.");
       }
     }
 
-    function updateExtraCost() {
-      const input = document.getElementById('inputExtraGb');
-      const gb = input ? (parseInt(input.value) || 1) : 1;
-      const cost = gb * 10000;
-      const priceEl = document.getElementById('extra-total-price');
-      if (priceEl) priceEl.innerText = cost.toLocaleString() + ' تومان';
-    }
-
-    function saveAccountLocally(username) {
-      try {
-        let list = JSON.parse(localStorage.getItem('netpro_my_accounts') || '[]');
-        if (!list.includes(username)) {
-          list.push(username);
-          localStorage.setItem('netpro_my_accounts', JSON.stringify(list));
-        }
-      } catch (e) {}
-    }
-
-    function renderSavedAccounts() {
-      const box = document.getElementById('savedServicesContainer');
-      let list = [];
-      try {
-        list = JSON.parse(localStorage.getItem('netpro_my_accounts') || '[]');
-      } catch (e) {}
-
-      if (list.length === 0) {
-        box.innerHTML = '';
-        return;
-      }
-
-      box.innerHTML = `
-        <div style="font-size: 0.85rem; color: var(--hint); margin-bottom: 8px;">اشتراک‌های قبلی شما:</div>
-        ${list.map(u => `
-          <div class="service-card" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-            <span style="font-weight: 900; font-size: 1.05rem; color: #38bdf8; direction: ltr;">${u}</span>
-            <button type="button" class="btn-menu btn-orange" style="width: auto; padding: 8px 16px; font-size: 0.85rem;" onclick="startRenewForUser('${u}')">
-              🔄 تمدید این اکانت
-            </button>
-          </div>
-        `).join('')}
-      `;
-    }
-
-    function startRenewForUser(u) {
-      state.orderType = "renew";
-      document.getElementById('plansHeaderTitle').innerText = `انتخاب پلن تمدید (${u})`;
-      document.getElementById('lblServiceUser').innerText = "نام کاربری اشتراک تمدیدی:";
-      document.getElementById('targetServiceUsername').value = u;
-      showPage('page-plans');
-    }
-
-    async function sendOrderDirectly(payload) {
-      const btn = document.activeElement;
-      if (btn) btn.innerText = "⏳ در حال ثبت...";
-
-      if (payload.order_type !== "wallet") {
-        saveAccountLocally(payload.service_username);
-      }
-
-      // ارسال مستقیم به ربات برای ذخیره قطعی
-      try {
-        await fetch(`http://82.115.25.138:8080/api/register_order`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            user_id: currentUserId,
-            service_username: payload.service_username,
-            plan: payload.plan,
-            price: payload.price,
-            ref_id: payload.ref_id,
-            order_type: payload.order_type
-          })
-        });
-      } catch (e) {}
-
-      let userMsg = "";
-      if (payload.order_type === "wallet") {
-        userMsg = `🧾 <b>فاکتور شارژ کیف پول صادر گردید:</b>\n\n` +
-                  `💰 مبلغ: <b>${payload.price} تومان</b>\n\n` +
-                  `لطفاً مبلغ فوق را به شماره کارت زیر واریز فرمایید:\n` +
-                  `💳 <code>6219861817080335</code>\n` +
-                  `به نام: <b>آباده ئی</b>\n\n` +
-                  `📸 <b>سپس تصویر فیش واریزی خود را در همین صفحه ارسال فرمایید.</b>`;
+    // هدایت به گزینه‌های دیگر
+    function chooseAction(action) {
+      if (tg && typeof tg.sendData === 'function') {
+        tg.sendData("ACTION_" + action);
       } else {
-        const typeLbl = payload.order_type === "extra" ? "حجم اضافه" : (payload.order_type === "renew" ? "تمدید اشتراک" : "خرید اشتراک جدید");
-        userMsg = `🧾 <b>فاکتور ${typeLbl} با موفقیت در سیستم ثبت شد:</b>\n\n` +
-                  `🔑 نام کاربری انتخابی: <code>${payload.service_username}</code>\n` +
-                  `📦 پلن انتخابی: <b>${payload.plan}</b>\n` +
-                  `💰 مبلغ: ${payload.price} تومان\n` +
-                  `🔢 کد پیگیری: <code>${payload.ref_id}</code>\n\n` +
-                  `📸 <b>لطفاً تصویر رسید پرداخت (فیش واریزی) خود را در همین صفحه ارسال فرمایید.</b>`;
-      }
-
-      const adminMsg = `⚡️ <b>سفارش جدید (${payload.order_type === 'wallet' ? '💳 شارژ کیف پول' : (payload.order_type === 'renew' ? '🔄 تمدید سرویس' : (payload.order_type === 'extra' ? '➕ حجم اضافه' : '🛍 خرید اشتراک'))}):</b>\n\n` +
-                       `👤 خریدار: ${currentUserName} (<code>${currentUserId}</code>)\n` +
-                       `🔑 <b>نام کاربری:</b> <code>${payload.service_username}</code>\n` +
-                       `📦 مشخصات پلن: <b>${payload.plan}</b>\n` +
-                       `💰 مبلغ: ${payload.price} تومان\n` +
-                       `🔢 پیگیری: <code>${payload.ref_id}</code>`;
-
-      try {
-        await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ chat_id: currentUserId, text: userMsg, parse_mode: "HTML" })
-        });
-
-        await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ chat_id: ADMIN_ID, text: adminMsg, parse_mode: "HTML" })
-        });
-      } catch (e) {
-        console.error("Fetch Error:", e);
-      }
-
-      if (tg && typeof tg.close === 'function') {
-        tg.close();
-      } else {
-        alert("فاکتور به صفحه چت ارسال شد! لطفاً عکس فیش را ارسال فرمایید.");
+        alert("گزینه انتخاب شد.");
       }
     }
-
-    document.addEventListener('DOMContentLoaded', () => {
-      const nameEl = document.getElementById('user-display-name');
-      if (nameEl) nameEl.innerText = currentUserName;
-
-      document.querySelectorAll('.btn-go-home').forEach(b => {
-        b.onclick = () => showPage('page-home');
-      });
-
-      const urlParams = new URLSearchParams(window.location.search);
-      const walletParam = urlParams.get('wallet');
-      const modeParam = urlParams.get('mode');
-      const userParam = urlParams.get('user');
-
-      if (walletParam) {
-        state.walletBalance = parseInt(walletParam) || 0;
-        document.getElementById('walletMainBalance').innerText = state.walletBalance.toLocaleString() + ' تومان';
-        document.getElementById('top-wallet-display').innerText = state.walletBalance.toLocaleString();
-      }
-
-      if (modeParam === 'renew') {
-        state.orderType = "renew";
-        document.getElementById('plansHeaderTitle').innerText = "انتخاب پلن تمدید اشتراک";
-        document.getElementById('lblServiceUser').innerText = "نام کاربری اشتراک قبلی جهت تمدید:";
-        if (userParam) {
-          saveAccountLocally(userParam);
-          document.getElementById('targetServiceUsername').value = userParam;
-        }
-        showPage('page-plans');
-      }
-
-      document.getElementById('m-btn-buy').onclick = () => {
-        state.orderType = "new";
-        document.getElementById('plansHeaderTitle').innerText = "انتخاب پلن اشتراک جدید";
-        document.getElementById('lblServiceUser').innerText = "نام کاربری انگلیسی دلخواه سرویس:";
-        document.getElementById('targetServiceUsername').value = "";
-        showPage('page-plans');
-      };
-
-      document.getElementById('m-btn-renew').onclick = () => {
-        renderSavedAccounts();
-        showPage('page-my-services');
-      };
-
-      document.getElementById('btn-proceed-renew').onclick = () => {
-        const u = document.getElementById('inputRenewUsername').value.trim().toLowerCase();
-        if (!u) { alert('لطفاً نام کاربری را وارد کنید.'); return; }
-        saveAccountLocally(u);
-        startRenewForUser(u);
-      };
-
-      document.getElementById('btn-check-bot-services').onclick = () => {
-        if (tg && typeof tg.close === 'function') {
-          tg.close();
-        } else {
-          alert("لطفاً در ربات دکمه «🔄 تمدید اشتراک‌های من» را انتخاب نمایید.");
-        }
-      };
-
-      document.getElementById('m-btn-extra').onclick = () => {
-        state.orderType = "extra";
-        showPage('page-buy-extra');
-      };
-
-      document.getElementById('m-btn-wallet').onclick = () => {
-        state.orderType = "wallet";
-        showPage('page-wallet');
-      };
-
-      const inputExtra = document.getElementById('inputExtraGb');
-      if (inputExtra) inputExtra.oninput = updateExtraCost;
-
-      document.querySelectorAll('.plan-card').forEach(c => {
-        c.onclick = function() {
-          state.selectedPlan = this.getAttribute('data-name');
-          state.selectedPrice = this.getAttribute('data-price');
-          document.getElementById('pay-plan-name').innerText = state.selectedPlan;
-          document.getElementById('pay-plan-price').innerText = state.selectedPrice + ' تومان';
-          showPage('page-pay');
-        };
-      });
-
-      document.getElementById('btn-submit-pay').onclick = function() {
-        const u = document.getElementById('targetServiceUsername').value.trim().toLowerCase();
-        const ref = document.getElementById('payRefId').value.trim();
-
-        if (!u) { alert('لطفاً نام کاربری را وارد کنید.'); return; }
-        if (!ref) { alert('لطفاً کد پیگیری را وارد کنید.'); return; }
-
-        sendOrderDirectly({
-          service_username: u,
-          plan: state.selectedPlan,
-          price: state.selectedPrice,
-          ref_id: ref,
-          order_type: state.orderType
-        });
-      };
-
-      document.getElementById('btn-submit-extra').onclick = function() {
-        const u = document.getElementById('extraUsernameInput').value.trim().toLowerCase();
-        const ref = document.getElementById('extraRefId').value.trim();
-        const gb = parseInt(document.getElementById('inputExtraGb').value) || 1;
-        const cost = gb * 10000;
-
-        if (!u) { alert('لطفاً نام کاربری را وارد کنید.'); return; }
-        if (!ref) { alert('لطفاً کد پیگیری را وارد کنید.'); return; }
-
-        sendOrderDirectly({
-          service_username: u,
-          plan: `حجم اضافه ${gb} گیگابایت`,
-          price: cost.toLocaleString(),
-          ref_id: ref,
-          order_type: "extra"
-        });
-      };
-
-      // تایید شارژ کیف پول
-      document.getElementById('btn-submit-wallet-charge').onclick = function() {
-        const amtInput = document.getElementById('inputCustomWalletAmount').value.trim();
-        const amt = parseInt(amtInput);
-
-        if (!amt || amt < 10000) {
-          alert('لطفاً مبلغ معتبری وارد فرمایید (حداقل ۱۰,۰۰۰ تومان).');
-          return;
-        }
-
-        sendOrderDirectly({
-          service_username: "کیف_پول",
-          plan: "شارژ کیف پول",
-          price: amt.toLocaleString(),
-          ref_id: "فیش_واریزی",
-          order_type: "wallet"
-        });
-      };
-    });
   </script>
 </body>
 </html>
