@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>نت پرو | NetPro</title>
-    <!-- بارگذاری فونت‌های یکان و یک فونت فانتزی (Lalezar برای عناوین فانتزی) -->
     <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
     <link href="https://cdn.jsdelivr.net/gh/rastikerdar/lalezar-font@v3.8.0/dist/font-face.css" rel="stylesheet" type="text/css" />
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -30,10 +29,7 @@
             font-family: 'Lalezar', cursive;
             letter-spacing: 0.5px;
         }
-        .container {
-            max-width: 480px;
-            margin: 0 auto;
-        }
+        .container { max-width: 480px; margin: 0 auto; }
         .card {
             background: var(--card-bg);
             border: 1px solid var(--border-color);
@@ -55,55 +51,37 @@
             cursor: pointer;
             margin-top: 12px;
             font-family: 'Vazirmatn', sans-serif;
-            transition: 0.2s;
         }
-        .btn:active {
-            opacity: 0.8;
-        }
-        .btn-success {
-            background-color: var(--success-color);
-        }
-        .hidden {
-            display: none !important;
-        }
-        .sub-box {
+        .btn-success { background-color: var(--success-color); }
+        .hidden { display: none !important; }
+        .sub-box, .plan-card {
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid var(--border-color);
             border-radius: 12px;
             padding: 12px;
             margin-bottom: 10px;
             text-align: right;
-        }
-        .plan-card {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 12px;
-            margin-bottom: 10px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            text-align: right;
         }
-        input, select {
-            width: 100%;
-            padding: 12px;
-            margin-top: 8px;
-            margin-bottom: 12px;
+        .card-box {
             background: #0f172a;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            color: #fff;
-            font-family: 'Vazirmatn', sans-serif;
-            box-sizing: border-box;
+            border: 1px dashed var(--accent-color);
+            border-radius: 10px;
+            padding: 12px;
+            margin: 10px 0;
+            font-family: monospace;
+            font-size: 18px;
+            color: var(--accent-color);
+            letter-spacing: 2px;
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-
-    <!-- صفحه نخست (خوش‌آمدگویی و ورود) -->
+    <!-- صفحه ورود -->
     <div id="welcome-screen" class="card">
         <h1 style="color: var(--accent-color); font-size: 28px; margin-bottom: 5px;">⚡ نت پرو ⚡</h1>
         <h2 class="fancy-title" style="font-size: 22px; color: #fff; margin-top: 0;">به اپلیکیشن نت پرو خوش آمدید</h2>
@@ -113,28 +91,20 @@
         <button class="btn" onclick="handleLogin()">ورود به حساب کاربری</button>
     </div>
 
-    <!-- داشبورد مدیریت اشتراک‌ها / خرید -->
+    <!-- داشبورد -->
     <div id="dashboard-screen" class="hidden">
         <div class="card" style="text-align: right;">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-                <h3 style="margin: 0; color: var(--accent-color);">حساب کاربری من</h3>
-                <span id="user-id-badge" style="font-size: 12px; background: #334155; padding: 4px 8px; border-radius: 6px; color: var(--text-hint);">ID: --</span>
-            </div>
-            <p id="user-welcome-name" style="margin: 8px 0 0 0; font-size: 14px; color: var(--text-hint);">کاربر گرامی</p>
+            <h3 style="margin: 0; color: var(--accent-color);">حساب کاربری من</h3>
+            <p id="user-welcome-name" style="margin: 8px 0 0 0; font-size: 14px; color: var(--text-hint);">در حال بارگذاری...</p>
         </div>
 
-        <!-- بخش اشتراک‌های کاربر -->
         <div id="active-subs-section" class="card hidden" style="text-align: right;">
             <h3 style="margin-top: 0; color: var(--success-color);">📦 اشتراک‌های فعال شما</h3>
-            <div id="subs-list">
-                <!-- لیست اشتراک‌ها به صورت دینامیک اینجا قرار می‌گیرد -->
-            </div>
+            <div id="subs-list"></div>
         </div>
 
-        <!-- بخش خرید اشتراک (اگر اشتراکی نداشت یا خواست بخره) -->
-        <div id="buy-section" class="card" style="text-align: right;">
+        <div class="card" style="text-align: right;">
             <h3 style="margin-top: 0; color: var(--accent-color);">🛒 خرید اشتراک جدید</h3>
-            
             <div class="plan-card">
                 <div>
                     <strong>پلن ۳۰ روزه (۳۰ گیگ)</strong>
@@ -142,132 +112,90 @@
                 </div>
                 <button class="btn" style="width: auto; padding: 8px 16px; margin:0;" onclick="selectPlan('پلن ۳۰ روزه - ۳۰ گیگ', 150000)">انتخاب</button>
             </div>
-
-            <div class="plan-card">
-                <div>
-                    <strong>پلن ۹۰ روزه (۱۰۰ گیگ)</strong>
-                    <div style="font-size: 12px; color: var(--text-hint);">۴۰۰,۰۰۰ تومان</div>
-                </div>
-                <button class="btn" style="width: auto; padding: 8px 16px; margin:0;" onclick="selectPlan('پلن ۹۰ روزه - ۱۰۰ گیگ', 400000)">انتخاب</button>
-            </div>
         </div>
     </div>
 
-    <!-- صفحه انتخاب پرداخت و ارسال رسید -->
+    <!-- صفحه پرداخت کارت به کارت و آپلود رسید -->
     <div id="payment-screen" class="card hidden" style="text-align: right;">
-        <h3 style="margin-top: 0; color: var(--accent-color);">💳 نهایی‌سازی خرید</h3>
+        <h3 style="margin-top: 0; color: var(--accent-color);">💳 کارت به کارت</h3>
         <p id="selected-plan-info" style="font-size: 14px; color: var(--text-hint);"></p>
+        
+        <p style="font-size: 13px; margin-bottom: 5px;">لطفاً مبلغ را به شماره کارت زیر واریز کنید:</p>
+        <div class="card-box" style="text-align: center;">6219861817080335</div>
 
-        <label style="font-size: 14px;">انتخاب روش پرداخت:</label>
-        <select id="payment-method">
-            <option value="card">کارت به کارت (شتابی)</option>
-            <option value="crypto">ارز دیجیتال (تتر - TRC20)</option>
-            <option value="gateway">درگاه پرداخت آنلاین</option>
-        </select>
+        <label style="font-size: 14px; margin-top: 15px; display: block;">آپلود تصویر فیش واریزی:</label>
+        <input type="file" id="receipt-file" accept="image/*" style="width:100%; margin-top:8px; background:#0f172a; padding:10px; border-radius:8px; border:1px solid var(--border-color); color:#fff;">
 
-        <label style="font-size: 14px; margin-top: 10px; display: block;">تصویر یا کد پیگیری رسید پرداخت:</label>
-        <input type="text" id="receipt-input" placeholder="شماره تراکنش یا لینک رسید را وارد کنید...">
-
-        <button class="btn btn-success" onclick="submitReceipt()">ارسال رسید و ثبت نهایی</button>
+        <button class="btn btn-success" onclick="submitOrder()">ارسال رسید به مدیریت</button>
         <button class="btn" style="background-color: #334155; color: #fff;" onclick="backToDashboard()">بازگشت</button>
     </div>
-
 </div>
 
 <script>
     let tg = window.Telegram.WebApp;
     tg.expand();
 
-    let currentUser = null;
-    let selectedPlanData = null;
+    const API_URL = "https://app.netprovpn.ir"; // آدرس سرور پایتون شما (یا آی‌پی سرور با پورت)
+    let currentUser = tg.initDataUnsafe?.user || { id: 123456, first_name: 'تست', username: 'test' };
+    let selectedPlan = null;
 
-    // گرفتن اطلاعات کاربر از تلگرام
-    const user = tg.initDataUnsafe?.user;
-    if (user) {
-        currentUser = {
-            id: user.id,
-            name: `${user.first_name || ''} ${user.last_name || ''}`.trim() || 'کاربر عزیز',
-            username: user.username ? `@${user.username}` : 'بدون یوزرنیم'
-        };
-    } else {
-        // حالت تست در مرورگر
-        currentUser = { id: 12345678, name: 'کاربر تستی', username: '@test_user' };
-    }
-
-    function handleLogin() {
+    async function handleLogin() {
         tg.HapticFeedback.impactOccurred('medium');
-        
-        // انتقال به صفحه داشبورد
         document.getElementById('welcome-screen').classList.add('hidden');
         document.getElementById('dashboard-screen').classList.remove('hidden');
+        document.getElementById('user-welcome-name').innerText = `${currentUser.first_name} (@${currentUser.username || 'guest'})`;
 
-        // نمایش اطلاعات کاربر
-        document.getElementById('user-id-badge').innerText = `ID: ${currentUser.id}`;
-        document.getElementById('user-welcome-name').innerText = `${currentUser.name} (${currentUser.username})`;
-
-        // بررسی دیتابیس (شبیه‌سازی بررسی اشتراک بر اساس آیدی تلگرام)
-        checkUserSubscriptions(currentUser.id);
-    }
-
-    function checkUserSubscriptions(userId) {
-        // اینجا در نسخه اصلی، درخواست به سرور (FastAPI/Database) می‌زنید تا اشتراک‌های این آیدی را چک کند
-        setTimeout(() => {
-            // برای نمونه فرض می‌کنیم کاربر اشتراک دارد یا ندارد. 
-            // فرض کنید یک نمونه اشتراک فعال برگردد:
-            let mockSubscriptions = [
-                { id: 'sub_01', name: 'اشتراک تست ۱ ماهه', username_vpn: 'netpro_user_1', traffic: '18.5 گیگ از ۳۰ گیگ', expire: '۱۲ روز دیگر' }
-            ];
-
-            if (mockSubscriptions.length > 0) {
-                // اگر اشتراک داشت
-                let subsListHtml = '';
-                mockSubscriptions.forEach(sub => {
-                    subsListHtml += `
-                        <div class="sub-box">
-                            <strong>🏷 ${sub.name}</strong>
-                            <p style="margin: 4px 0; font-size: 13px; color: var(--text-hint);">نام کاربری کانفیگ: <code style="color:var(--accent-color);">${sub.username_vpn}</code></p>
-                            <p style="margin: 4px 0; font-size: 13px; color: var(--text-hint);">حجم باقی‌مانده: ${sub.traffic}</p>
-                            <p style="margin: 4px 0; font-size: 13px; color: var(--text-hint);">تاریخ انقضا: ${sub.expire}</p>
-                            <button class="btn" style="padding: 8px; font-size: 13px; margin-top: 8px;" onclick="manageSub('${sub.id}')">مدیریت این اشتراک</button>
-                        </div>
-                    `;
+        // استعلام واقعی از سرور پایتون شما
+        try {
+            let response = await fetch(`${API_URL}/api/user/${currentUser.id}`);
+            let data = await response.json();
+            
+            if (data.subscriptions && data.subscriptions.length > 0) {
+                let html = '';
+                data.subscriptions.forEach(sub => {
+                    html += `<div class="sub-box"><div><strong>${sub.name}</strong><br><small>انقضا: ${sub.expire}</small></div></div>`;
                 });
-                document.getElementById('subs-list').innerHTML = subsListHtml;
+                document.getElementById('subs-list').innerHTML = html;
                 document.getElementById('active-subs-section').classList.remove('hidden');
             }
-        }, 300);
+        } catch (e) {
+            console.log("خطا در ارتباط با سرور پایتون یا کاربر فاقد اشتراک است.");
+        }
     }
 
-    function selectPlan(planName, planPrice) {
-        tg.HapticFeedback.impactOccurred('light');
-        selectedPlanData = { name: planName, price: planPrice };
-        
+    function selectPlan(name, price) {
+        selectedPlan = { name, price };
         document.getElementById('dashboard-screen').classList.add('hidden');
         document.getElementById('payment-screen').classList.remove('hidden');
-        document.getElementById('selected-plan-info').innerText = `پلن انتخابی: ${planName} — مبلغ: ${planPrice.toLocaleString()} تومان`;
+        document.getElementById('selected-plan-info').innerText = `${name} — ${price.toLocaleString()} تومان`;
     }
 
-    function submitReceipt() {
-        let receipt = document.getElementById('receipt-input').value;
-        if (!receipt) {
-            alert('لطفاً اطلاعات یا شماره رسید پرداخت را وارد کنید.');
+    async function submitOrder() {
+        let fileInput = document.getElementById('receipt-file');
+        if (fileInput.files.length === 0) {
+            alert('لطفاً تصویر فیش واریزی را انتخاب کنید.');
             return;
         }
 
+        let formData = new FormData();
+        formData.append('user_id', currentUser.id);
+        formData.append('username', currentUser.username || 'unknown');
+        formData.append('plan_name', selectedPlan.name);
+        formData.append('receipt', fileInput.files[0]);
+
         tg.HapticFeedback.notificationOccurred('success');
         
-        // ارسال پیام تایید خودکار به کاربر در مینی اپ
-        alert('رسید شما با موفقیت دریافت شد! پس از بررسی خودکار توسط ربات، اشتراک شما فعال شده و اطلاعات اتصال ارسال خواهد گردید. ✅');
-        
-        // بازگشت به داشبورد
-        document.getElementById('payment-screen').classList.add('hidden');
-        document.getElementById('dashboard-screen').classList.remove('hidden');
-        document.getElementById('receipt-input').value = '';
-    }
-
-    function manageSub(subId) {
-        tg.HapticFeedback.impactOccurred('medium');
-        alert(`باز کردن پنل مدیریت اشتراک ${subId} (نمایش کانفیگ، QR کُد و تمدید)`);
+        try {
+            let res = await fetch(`${API_URL}/api/order`, { method: 'POST', body: formData });
+            if (res.ok) {
+                alert('فیش واریزی با موفقیت ارسال شد! پس از تایید مدیر، اشتراک شما فعال می‌گردد.');
+                backToDashboard();
+            } else {
+                alert('خطا در ارسال اطلاعات به سرور.');
+            }
+        } catch (err) {
+            alert('خطا در اتصال به سرور پایتون.');
+        }
     }
 
     function backToDashboard() {
@@ -275,6 +203,5 @@
         document.getElementById('dashboard-screen').classList.remove('hidden');
     }
 </script>
-
 </body>
 </html>
