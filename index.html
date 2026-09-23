@@ -3,23 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مدیریت اشتراک نت پرو</title>
-    <!-- اتصال به کتابخانه رسمی تلگرام -->
+    <title>نت پرو | NetPro</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <!-- فونت وزیرمتن برای زیبایی ظاهر -->
     <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
     <style>
-        :root {
-            --tg-theme-bg-color: #ffffff;
-            --tg-theme-text-color: #222222;
-            --tg-theme-hint-color: #999999;
-            --tg-theme-button-color: #2481cc;
-            --tg-theme-button-text-color: #ffffff;
-        }
         body {
             font-family: Vazirmatn, sans-serif;
-            background-color: var(--tg-theme-bg-color, #f4f4f5);
-            color: var(--tg-theme-text-color, #111);
+            background-color: #0f172a;
+            color: #f8fafc;
             margin: 0;
             padding: 16px;
         }
@@ -27,21 +18,21 @@
             max-width: 480px;
             margin: 0 auto;
         }
-        .card {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(0, 0, 0, 0.1);
-            border-radius: 16px;
-            padding: 16px;
-            margin-bottom: 16px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-        }
         .header {
             text-align: center;
             margin-bottom: 24px;
         }
+        .card {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
         .btn {
-            background-color: var(--tg-theme-button-color, #2481cc);
-            color: var(--tg-theme-button-text-color, #ffffff);
+            background-color: #38bdf8;
+            color: #0f172a;
             border: none;
             border-radius: 12px;
             padding: 14px;
@@ -50,16 +41,24 @@
             font-weight: bold;
             cursor: pointer;
             margin-top: 10px;
+            transition: 0.2s;
+        }
+        .btn:active {
+            opacity: 0.8;
         }
         .plan-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 12px;
-            border-bottom: 1px solid rgba(0,0,0,0.05);
+            padding: 12px 0;
+            border-bottom: 1px solid #334155;
         }
         .plan-item:last-child {
             border-bottom: none;
+        }
+        .price {
+            color: #38bdf8;
+            font-weight: bold;
         }
     </style>
 </head>
@@ -67,73 +66,81 @@
 
 <div class="container">
     <div class="header">
-        <h2>🚀 مدیریت اشتراک نت پرو</h2>
-        <p id="user-greeting" style="color: var(--tg-theme-hint-color);">خوش آمدید</p>
+        <h2>⚡ نت پرو (NetPro)</h2>
+        <p id="user-greeting" style="color: #94a3b8; font-size: 14px;">در حال بارگذاری اطلاعات...</p>
     </div>
 
-    <!-- بخش اشتراک فعال کاربر -->
+    <!-- بخش اشتراک فعال -->
     <div class="card">
-        <h3>اشتراک فعال شما</h3>
-        <p>وضعیت: <span id="sub-status" style="color: #27ae60; font-weight: bold;">در حال بررسی...</span></p>
-        <p>حجم باقی‌مانده: <span id="sub-traffic">--</span></p>
-        <p>تاریخ انقضا: <span id="sub-expire">--</span></p>
+        <h3 style="margin-top: 0; font-size: 16px; color: #38bdf8;">📦 اشتراک فعال شما</h3>
+        <p>وضعیت: <span id="sub-status" style="color: #4ade80; font-weight: bold;">بررسی حساب...</span></p>
+        <p>حجم مصرفی: <span id="sub-traffic">--</span></p>
+        <p>انقضا: <span id="sub-expire">--</span></p>
     </div>
 
-    <!-- بخش خرید اشتراک جدید -->
+    <!-- بخش خرید اشتراک -->
     <div class="card">
-        <h3>خرید اشتراک جدید</h3>
+        <h3 style="margin-top: 0; font-size: 16px; color: #38bdf8;">🛒 خرید اشتراک جدید</h3>
+        
         <div class="plan-item">
             <div>
-                <strong>پلن ۱ ماهه (۳۰ گیگ)</strong>
-                <div style="font-size: 13px; color: var(--tg-theme-hint-color);">مناسب مصرف عادی</div>
+                <strong>پلن ۳۰ روزه (۳۰ گیگ)</strong>
+                <div style="font-size: 12px; color: #94a3b8;">تک کاربره پرسرعت</div>
             </div>
-            <button class="btn" style="width: auto; padding: 8px 16px; font-size: 14px;" onclick="buyPlan('1_month')">۱۵۰ هزار تومان</button>
+            <div>
+                <div class="price">۱۵۰ ه.ت</div>
+                <button class="btn" style="width: auto; padding: 6px 12px; font-size: 13px;" onclick="buyPlan('پلن ۳۰ روزه')">خرید</button>
+            </div>
         </div>
+
         <div class="plan-item">
             <div>
-                <strong>پلن ۳ ماهه (۱۰۰ گیگ)</strong>
-                <div style="font-size: 13px; color: var(--tg-theme-hint-color);">پرفروش و اقتصادی</div>
+                <strong>پلن ۹۰ روزه (۱۰۰ گیگ)</strong>
+                <div style="font-size: 12px; color: #94a3b8;">پرفروش و اقتصادی</div>
             </div>
-            <button class="btn" style="width: auto; padding: 8px 16px; font-size: 14px;" onclick="buyPlan('3_month')">۴۰۰ هزار تومان</button>
+            <div>
+                <div class="price">۴۰۰ ه.ت</div>
+                <button class="btn" style="width: auto; padding: 6px 12px; font-size: 13px;" onclick="buyPlan('پلن ۹۰ روزه')">خرید</button>
+            </div>
         </div>
     </div>
 
-    <!-- دکمه دریافت کانفیگ -->
-    <button class="btn" onclick="getConfigs()">دریافت کانفیگ اتصال</button>
+    <button class="btn" onclick="getConfigs()" style="background-color: #22c55e; color: #fff;">🔑 دریافت کانفیگ‌های اتصال</button>
 </div>
 
 <script>
-    // فعال‌سازی مینی‌اپ و هماهنگی با تم تلگرام
     let tg = window.Telegram.WebApp;
     tg.expand();
 
-    // دریافت اطلاعات کاربر از تلگرام
+    // گرفتن اطلاعات کاربر از تلگرام
     const user = tg.initDataUnsafe?.user;
     if (user) {
-        document.getElementById('user-greeting').innerText = `کاربر عزیز: ${user.first_name || 'کاربر گرامی'} (@${user.username || 'guest'})`;
-        
-        // شبیه‌سازی دریافت اطلاعات اشتراک کاربر از دیتابیس شما
+        document.getElementById('user-greeting.innerText = `سلام ${user.first_name || 'کاربر عزیز'} 👋`;
+        // اینجا می‌توانید آیدی کاربر (user.id) را برای دریافت اطلاعات اشتراک به سرور خود بفرستید
         loadUserData(user.id);
+    } else {
+        document.getElementById('user-greeting').innerText = 'خوش آمدید (نسخه وب)';
     }
 
     function loadUserData(userId) {
-        // اینجا در نسخه اصلی، درخواست AJAX/Fetch به سرور خودتون می‌زنید
+        // شبیه‌سازی اتصال به دیتابیس شما
         setTimeout(() => {
             document.getElementById('sub-status').innerText = 'فعال ✅';
-            document.getElementById('sub-traffic':  document.getElementById('sub-traffic').innerText = '24.5 گیگابایت';
-            document.getElementById('sub-expire').innerText = '۱۲ روز دیگر';
-        }, 500);
+            document.getElementById('sub-traffic').innerText = '12.4 گیگ از 30 گیگ';
+            document.getElementById('sub-expire').innerText = '۱۸ روز دیگر';
+        }, 400);
     }
 
-    function buyPlan(planId) {
+    function buyPlan(planName) {
         tg.HapticFeedback.impactOccurred('medium');
-        // ارسال اطلاعات خرید به ربات یا درگاه پرداخت
-        tg.sendData(JSON.stringify({action: 'buy', plan: planId}));
+        // به جای sendData، کاربر را به ربات هدایت می‌کنیم تا فاکتور صادر شود یا پیام ارسال کند
+        const botUsername = 'NetProVPN_bot'; // نام کاربری ربات شما
+        window.open(`https://t.me/${botUsername}?start=buy_${encodeURIComponent(planName)}`, '_blank');
     }
 
     function getConfigs() {
         tg.HapticFeedback.notificationOccurred('success');
-        alert('کانفیگ‌های شما برای اتصال آماده شد!');
+        alert('کانفیگ‌های شما در ربات تلگرام برای شما ارسال شد!');
     }
 </script>
 
