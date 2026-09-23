@@ -1,288 +1,141 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>NET PRO VPN</title>
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;700;800;900&display=swap" rel="stylesheet">
-  
-  <style>
-    :root {
-      --bg: #070a12;
-      --card-bg: rgba(17, 24, 39, 0.75);
-      --text: #ffffff;
-      --hint: #94a3b8;
-    }
-
-    * {
-      box-sizing: border-box;
-      user-select: none;
-      -webkit-tap-highlight-color: transparent;
-      font-family: 'Vazirmatn', -apple-system, BlinkMacSystemFont, sans-serif;
-    }
-
-    body {
-      background: radial-gradient(circle at top, #111827 0%, var(--bg) 100%);
-      color: var(--text);
-      margin: 0;
-      padding: 16px;
-      direction: rtl;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .header-bar {
-      text-align: center;
-      margin-top: 4px;
-      margin-bottom: 20px;
-    }
-
-    .brand-title {
-      font-size: 1.55rem;
-      font-weight: 900;
-      letter-spacing: 0.5px;
-      background: linear-gradient(135deg, #60a5fa 0%, #38bdf8 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      margin-bottom: 4px;
-    }
-
-    .brand-sub {
-      font-size: 0.84rem;
-      color: var(--hint);
-    }
-
-    .page {
-      display: none;
-      animation: fadeIn 0.22s ease-out;
-      width: 100%;
-    }
-    .page.active {
-      display: block;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(6px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .color-btn {
-      width: 100%;
-      border: none;
-      border-radius: 16px;
-      padding: 16px 20px;
-      margin-bottom: 14px;
-      font-size: 1rem;
-      font-weight: 800;
-      color: #ffffff;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      cursor: pointer;
-      transition: all 0.15s ease;
-    }
-    .color-btn:active {
-      transform: scale(0.97);
-    }
-
-    /* ۱. خرید اشتراک (سبز) */
-    .btn-green {
-      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-      box-shadow: 0 4px 18px rgba(16, 185, 129, 0.42);
-      border: 1px solid rgba(16, 185, 129, 0.6);
-    }
-
-    /* ۲. تمدید اشتراک (آبی کم‌رنگ) */
-    .btn-lightblue {
-      background: linear-gradient(135deg, #38bdf8 0%, #0284c7 100%);
-      box-shadow: 0 4px 18px rgba(56, 189, 248, 0.42);
-      border: 1px solid rgba(56, 189, 248, 0.6);
-    }
-
-    /* ۳. کیف پول (نارنجی) */
-    .btn-orange {
-      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-      box-shadow: 0 4px 18px rgba(245, 158, 11, 0.42);
-      border: 1px solid rgba(245, 158, 11, 0.6);
-    }
-
-    /* ۴. حجم اضافه (قرمز ملایم) */
-    .btn-lightred {
-      background: linear-gradient(135deg, #f87171 0%, #dc2626 100%);
-      box-shadow: 0 4px 18px rgba(248, 113, 113, 0.42);
-      border: 1px solid rgba(248, 113, 113, 0.6);
-    }
-
-    /* پلن‌های ۲ آبی، ۲ سبز، ۲ نارنجی، ۲ قرمز */
-    .plan-blue {
-      background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
-      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
-      border: 1px solid rgba(96, 165, 250, 0.4);
-    }
-
-    .plan-green {
-      background: linear-gradient(135deg, #10b981 0%, #047857 100%);
-      box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);
-      border: 1px solid rgba(52, 211, 153, 0.4);
-    }
-
-    .plan-orange {
-      background: linear-gradient(135deg, #ea580c 0%, #c2410c 100%);
-      box-shadow: 0 4px 14px rgba(234, 88, 12, 0.35);
-      border: 1px solid rgba(251, 146, 60, 0.4);
-    }
-
-    .plan-red {
-      background: linear-gradient(135deg, #e11d48 0%, #be123c 100%);
-      box-shadow: 0 4px 14px rgba(225, 29, 72, 0.35);
-      border: 1px solid rgba(251, 113, 133, 0.4);
-    }
-
-    .price-pill {
-      background: rgba(0, 0, 0, 0.28);
-      padding: 6px 12px;
-      border-radius: 10px;
-      font-size: 0.88rem;
-      font-weight: 900;
-      border: 1px solid rgba(255, 255, 255, 0.2);
-    }
-
-    .nav-back {
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      color: #fff;
-      padding: 7px 14px;
-      border-radius: 10px;
-      font-size: 0.85rem;
-      cursor: pointer;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مدیریت اشتراک نت پرو</title>
+    <!-- اتصال به کتابخانه رسمی تلگرام -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <!-- فونت وزیرمتن برای زیبایی ظاهر -->
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
+    <style>
+        :root {
+            --tg-theme-bg-color: #ffffff;
+            --tg-theme-text-color: #222222;
+            --tg-theme-hint-color: #999999;
+            --tg-theme-button-color: #2481cc;
+            --tg-theme-button-text-color: #ffffff;
+        }
+        body {
+            font-family: Vazirmatn, sans-serif;
+            background-color: var(--tg-theme-bg-color, #f4f4f5);
+            color: var(--tg-theme-text-color, #111);
+            margin: 0;
+            padding: 16px;
+        }
+        .container {
+            max-width: 480px;
+            margin: 0 auto;
+        }
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+        .btn {
+            background-color: var(--tg-theme-button-color, #2481cc);
+            color: var(--tg-theme-button-text-color, #ffffff);
+            border: none;
+            border-radius: 12px;
+            padding: 14px;
+            width: 100%;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .plan-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+        .plan-item:last-child {
+            border-bottom: none;
+        }
+    </style>
 </head>
 <body>
 
-  <div class="header-bar">
-    <div class="brand-title">NET PRO VPN</div>
-    <div class="brand-sub">سرویس‌های اختصاصی، سریع و پایدار</div>
-  </div>
-
-  <!-- صفحه اصلی با ۴ رنگ -->
-  <div id="page-home" class="page active">
-    <button type="button" class="color-btn btn-green" onclick="showPlans()">
-      <span>🛍 خرید اشتراک جدید</span>
-      <span>←</span>
-    </button>
-
-    <button type="button" class="color-btn btn-lightblue" onclick="selectAction('renew')">
-      <span>🔹 تمدید اشتراک قبلی</span>
-      <span>←</span>
-    </button>
-
-    <button type="button" class="color-btn btn-orange" onclick="selectAction('wallet')">
-      <span>🟠 شارژ کیف پول</span>
-      <span>💰</span>
-    </button>
-
-    <button type="button" class="color-btn btn-lightred" onclick="selectAction('extra')">
-      <span>🔻 خرید حجم اضافه</span>
-      <span>➕</span>
-    </button>
-  </div>
-
-  <!-- صفحه پلن‌ها -->
-  <div id="page-plans" class="page">
-    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
-      <button type="button" class="nav-back" onclick="showHome()">← بازگشت</button>
-      <span style="font-weight: 800; font-size: 0.95rem;">انتخاب تعرفه و پلن</span>
+<div class="container">
+    <div class="header">
+        <h2>🚀 مدیریت اشتراک نت پرو</h2>
+        <p id="user-greeting" style="color: var(--tg-theme-hint-color);">خوش آمدید</p>
     </div>
 
-    <!-- دو پلن اول: آبی -->
-    <button type="button" class="color-btn plan-blue" onclick="choosePlan(0)">
-      <span>یکماهه ۱۰ گیگابایت</span>
-      <span class="price-pill">۱۳۷,۰۰۰ ت</span>
-    </button>
-    <button type="button" class="color-btn plan-blue" onclick="choosePlan(1)">
-      <span>یکماهه ۲۰ گیگابایت</span>
-      <span class="price-pill">۲۶۴,۰۰۰ ت</span>
-    </button>
+    <!-- بخش اشتراک فعال کاربر -->
+    <div class="card">
+        <h3>اشتراک فعال شما</h3>
+        <p>وضعیت: <span id="sub-status" style="color: #27ae60; font-weight: bold;">در حال بررسی...</span></p>
+        <p>حجم باقی‌مانده: <span id="sub-traffic">--</span></p>
+        <p>تاریخ انقضا: <span id="sub-expire">--</span></p>
+    </div>
 
-    <!-- دو پلن دوم: سبز -->
-    <button type="button" class="color-btn plan-green" onclick="choosePlan(2)">
-      <span>یکماهه ۳۰ گیگابایت</span>
-      <span class="price-pill">۳۸۴,۰۰۰ ت</span>
-    </button>
-    <button type="button" class="color-btn plan-green" onclick="choosePlan(3)">
-      <span>یکماهه ۵۰ گیگابایت</span>
-      <span class="price-pill">۵۵۴,۰۰۰ ت</span>
-    </button>
+    <!-- بخش خرید اشتراک جدید -->
+    <div class="card">
+        <h3>خرید اشتراک جدید</h3>
+        <div class="plan-item">
+            <div>
+                <strong>پلن ۱ ماهه (۳۰ گیگ)</strong>
+                <div style="font-size: 13px; color: var(--tg-theme-hint-color);">مناسب مصرف عادی</div>
+            </div>
+            <button class="btn" style="width: auto; padding: 8px 16px; font-size: 14px;" onclick="buyPlan('1_month')">۱۵۰ هزار تومان</button>
+        </div>
+        <div class="plan-item">
+            <div>
+                <strong>پلن ۳ ماهه (۱۰۰ گیگ)</strong>
+                <div style="font-size: 13px; color: var(--tg-theme-hint-color);">پرفروش و اقتصادی</div>
+            </div>
+            <button class="btn" style="width: auto; padding: 8px 16px; font-size: 14px;" onclick="buyPlan('3_month')">۴۰۰ هزار تومان</button>
+        </div>
+    </div>
 
-    <!-- دو پلن سوم: نارنجی -->
-    <button type="button" class="color-btn plan-orange" onclick="choosePlan(4)">
-      <span>یکماهه ۷۵ گیگابایت</span>
-      <span class="price-pill">۸۱۴,۰۰۰ ت</span>
-    </button>
-    <button type="button" class="color-btn plan-orange" onclick="choosePlan(5)">
-      <span>یکماهه ۱۰۰ گیگابایت</span>
-      <span class="price-pill">۱,۰۰۰,۰۰۰ ت</span>
-    </button>
+    <!-- دکمه دریافت کانفیگ -->
+    <button class="btn" onclick="getConfigs()">دریافت کانفیگ اتصال</button>
+</div>
 
-    <!-- دو پلن چهارم: قرمز -->
-    <button type="button" class="color-btn plan-red" onclick="choosePlan(6)">
-      <span>یکماهه ۱۵۰ گیگابایت</span>
-      <span class="price-pill">۱,۴۸۴,۰۰۰ ت</span>
-    </button>
-    <button type="button" class="color-btn plan-red" onclick="choosePlan(7)">
-      <span>یکماهه ۲۰۰ گیگابایت</span>
-      <span class="price-pill">۱,۸۵۴,۰۰۰ ت</span>
-    </button>
-  </div>
+<script>
+    // فعال‌سازی مینی‌اپ و هماهنگی با تم تلگرام
+    let tg = window.Telegram.WebApp;
+    tg.expand();
 
-  <script>
-    const BOT_TOKEN = "8900507347:AAH6txJQxR11H_bGj1dLw2Etyc_xd6WHgxQ";
-    const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
-    if (tg) {
-      try {
-        tg.ready();
-        tg.expand();
-      } catch (e) {}
+    // دریافت اطلاعات کاربر از تلگرام
+    const user = tg.initDataUnsafe?.user;
+    if (user) {
+        document.getElementById('user-greeting').innerText = `کاربر عزیز: ${user.first_name || 'کاربر گرامی'} (@${user.username || 'guest'})`;
+        
+        // شبیه‌سازی دریافت اطلاعات اشتراک کاربر از دیتابیس شما
+        loadUserData(user.id);
     }
 
-    const userId = tg && tg.initDataUnsafe && tg.initDataUnsafe.user ? tg.initDataUnsafe.user.id : 100161863;
-
-    function showHome() {
-      document.getElementById('page-plans').classList.remove('active');
-      document.getElementById('page-home').classList.add('active');
+    function loadUserData(userId) {
+        // اینجا در نسخه اصلی، درخواست AJAX/Fetch به سرور خودتون می‌زنید
+        setTimeout(() => {
+            document.getElementById('sub-status').innerText = 'فعال ✅';
+            document.getElementById('sub-traffic':  document.getElementById('sub-traffic').innerText = '24.5 گیگابایت';
+            document.getElementById('sub-expire').innerText = '۱۲ روز دیگر';
+        }, 500);
     }
 
-    function showPlans() {
-      document.getElementById('page-home').classList.remove('active');
-      document.getElementById('page-plans').classList.add('active');
+    function buyPlan(planId) {
+        tg.HapticFeedback.impactOccurred('medium');
+        // ارسال اطلاعات خرید به ربات یا درگاه پرداخت
+        tg.sendData(JSON.stringify({action: 'buy', plan: planId}));
     }
 
-    async function triggerBot(cmd) {
-      try {
-        await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ chat_id: userId, text: cmd })
-        });
-      } catch (e) {}
-      
-      if (tg && typeof tg.close === 'function') {
-        tg.close();
-      }
+    function getConfigs() {
+        tg.HapticFeedback.notificationOccurred('success');
+        alert('کانفیگ‌های شما برای اتصال آماده شد!');
     }
+</script>
 
-    function choosePlan(idx) {
-      triggerBot("/select_plan_" + idx);
-    }
-
-    function selectAction(act) {
-      triggerBot("/action_" + act);
-    }
-  </script>
 </body>
 </html>
